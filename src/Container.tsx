@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { View, StyleSheet } from 'react-native';
 import type { IPlayerMedia, IPresentationComponents } from './types';
 import FullscreenSlidingPlayer from './FullscreenSlidingPlayer';
 import {
@@ -85,7 +84,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     <NowPlayingContext.Provider value={nowPlayingState}>
       <PresentationContext.Provider value={presentationState}>
         <MiniPresentationLayoutContext.Provider value={miniLayoutState}>
-          <View style={StyleSheet.absoluteFill}>{children}</View>
+          {children}
           <FullscreenSlidingPlayer />
         </MiniPresentationLayoutContext.Provider>
       </PresentationContext.Provider>

@@ -16,9 +16,9 @@ export interface INowPlaying {
 
 export interface IPresentationComponents {
   // todo - document the props passed to these functions
-  VideoPresentationComponent(props: any): JSX.Element;
-  MiniPresentationComponent(props: any): JSX.Element;
-  FullScreenPresentationComponent(props: any): JSX.Element;
+  VideoPresentationComponent?(props: any): JSX.Element;
+  MiniPresentationComponent?(props: any): JSX.Element;
+  FullScreenPresentationComponent?(props: any): JSX.Element;
 }
 
 export interface IMiniPresentationLayout {

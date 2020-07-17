@@ -3,6 +3,7 @@ import { requireNativeComponent } from 'react-native';
 
 interface PortalOriginProps {
   destination: string | null;
+  style?: any;
   children: any;
 }
 
@@ -10,13 +11,13 @@ interface PortalDestinationProps {
   name: string;
 }
 
-const PortalOrigin = (props: PortalOriginProps) => (
+const PortalOrigin: React.FunctionComponent<PortalOriginProps> = (props) => (
   <RCTPortalOrigin {...props} />
 );
 
-const PortalDestination = (props: PortalDestinationProps) => (
-  <RCTPortalDestination {...props} />
-);
+const PortalDestination: React.FunctionComponent<PortalDestinationProps> = (
+  props
+) => <RCTPortalDestination {...props} />;
 
 const RCTPortalOrigin = requireNativeComponent('RCTPortalOrigin');
 const RCTPortalDestination = requireNativeComponent('RCTPortalDestination');

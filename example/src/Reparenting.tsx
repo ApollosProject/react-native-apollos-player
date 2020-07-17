@@ -38,7 +38,7 @@ export default function App() {
           <Video
             ref={video}
             style={{ width: 100, height: 100 * (9 / 16) }} // eslint-disable-line react-native/no-inline-styles
-            source={require('./broadchurch.mp4')}
+            source={require('./Players/broadchurch.mp4')}
             paused={false}
             muted={true}
             repeat={true}

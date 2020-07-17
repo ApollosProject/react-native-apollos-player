@@ -3,6 +3,13 @@ import { StyleSheet, View } from 'react-native';
 import Video from 'react-native-video';
 import usePlayer from '../usePlayer';
 
+const styles = StyleSheet.create({
+  background: {
+    backgroundColor: 'black',
+    ...StyleSheet.absoluteFillObject,
+  },
+});
+
 const RNVideoPresentation = () => {
   const { nowPlaying, isPlaying } = usePlayer();
   console.log({ nowPlaying, isPlaying }, !isPlaying);
@@ -21,7 +28,7 @@ const RNVideoPresentation = () => {
       resizeMode={'contain'}
       // style={StyleSheet.absoluteFill}
       // volume={mediaPlayer.muted ? 0 : 1}
-      style={StyleSheet.absoluteFill}
+      style={styles.background}
     />
   );
 };

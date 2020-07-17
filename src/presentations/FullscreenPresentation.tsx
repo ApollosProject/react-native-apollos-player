@@ -4,19 +4,21 @@ import { Text, View, Button, StyleSheet } from 'react-native';
 import usePlayer from '../usePlayer';
 
 const FullscreenPresentation = () => {
-  const { setIsFullscreen, isFullscreen } = usePlayer();
+  const { setIsFullscreen, isFullscreen, setNowPlaying } = usePlayer();
 
   return (
-    <View
-      style={[
-        StyleSheet.absoluteFill,
-        { backgroundColor: 'rgba(0,255,0,0.5)' }, // eslint-disable-line react-native/no-inline-styles
-      ]}
-    >
+    <View style={StyleSheet.absoluteFill}>
       <Text>FullscreenPresentation</Text>
       <Button
         onPress={() => setIsFullscreen(!isFullscreen)}
         title="Go Minimized"
+      />
+      <Button
+        onPress={() => {
+          setNowPlaying(null);
+          setIsFullscreen(false);
+        }}
+        title="Close media"
       />
     </View>
   );

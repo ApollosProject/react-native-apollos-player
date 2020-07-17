@@ -10,13 +10,59 @@ npm install react-native-apollos-player
 
 ## Usage
 
-```js
-import ApollosPlayer from "react-native-apollos-player";
+todo
 
-// ...
+## Architecture
 
-const result = await ApollosPlayer.multiply(3, 7);
+- We still render player at root-level
+- Need to figure out how to display above r-n modals / everything
+
+On iOS we can't render on top of modals, but we can move the video around
+On android we can still render on top of modals, but we cna't move the video around
+
+
+## Exposed Components:
+
+```jsx
+<ApollosPlayerProvider />
+
+<VideoPreviewView />
+<VideoPreviewMiniIOS />
+
+const { playNow, setIsPlaying, seek } = usePlayer();
+const { setOverlayInsets, setPresentationMode, setOverlayIsVisible } = usePlayerPresentation();
 ```
+
+```jsx
+  <VideoPreviewView
+    source={}
+  />
+```
+  iOS: preview plays the specified media, as long as something else isn't already playing.
+       on interaction, opens the media in full-screen Presentation
+  Android: preview plays the specified media.
+       On interaction, opens the media in full-screen Presentation
+
+---
+
+```jsx
+  <VideoPreviewMiniIOS
+    source={}
+    isVisible
+  />
+```
+  iOS: preview plays the specified media, unless something else is playing -
+       in which case, it will play show media instead.
+  Android:
+       does not render. this gets picked up by the root-level player
+
+---
+
+## Internal (these are likely over-ride-able props on Provider)
+
+- VideoTextureView
+- MiniPresentation
+- FullScreenPresentation
 
 ## Contributing
 

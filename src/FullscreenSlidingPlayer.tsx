@@ -5,7 +5,11 @@ import {
   Dimensions,
   LayoutChangeEvent,
   PanResponder,
+  Platform,
+  Modal,
 } from 'react-native';
+
+const usePortal = Platform.OS === 'ios';
 
 import {
   PresentationContext,
@@ -13,26 +17,39 @@ import {
   NowPlayingContext,
 } from './context';
 
+import VideoPresentationContainer from './VideoPresentationContainer';
+import { PortalDestination } from './portals';
+
 const FullscreenSlidingPlayer: React.FunctionComponent = () => {
   const {
-    VideoPresentationComponent,
     MiniPresentationComponent,
     FullScreenPresentationComponent,
   } = React.useContext(PresentationContext);
 
   const fullscreenAnimation = React.useRef(new Animated.Value(0)).current;
+  const noMediaAnimation = React.useRef(new Animated.Value(1)).current;
   const dragOffset = React.useRef(new Animated.Value(0)).current;
   const fullscreenHeightRef = React.useRef(Dimensions.get('window').height);
   const fullScreenWithOffset = React.useRef(
     Animated.add(fullscreenAnimation, dragOffset)
   ).current;
+  const fullscreenWithNoMediaAnimation = React.useRef(
+    Animated.add(fullscreenAnimation, noMediaAnimation)
+  ).current;
 
   const miniLayout = React.useContext(MiniPresentationLayoutContext);
 
-  const { isFullscreen, setIsFullscreen } = React.useContext(NowPlayingContext);
+  const { nowPlaying, isFullscreen, setIsFullscreen } = React.useContext(
+    NowPlayingContext
+  );
 
   Animated.spring(fullscreenAnimation, {
     toValue: isFullscreen ? 1 : 0,
+    useNativeDriver: true,
+  }).start();
+
+  Animated.spring(noMediaAnimation, {
+    toValue: nowPlaying?.source ? 0 : 1,
     useNativeDriver: true,
   }).start();
 
@@ -65,20 +82,20 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
       bottom: miniLayout.yOffset,
       width: miniLayout.width,
       height: miniLayout.height,
-      opacity: fullscreenAnimation.interpolate({
+      opacity: fullscreenWithNoMediaAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [1, 0],
       }),
       transform: [
         {
-          translateX: fullscreenAnimation.interpolate({
+          translateX: fullscreenWithNoMediaAnimation.interpolate({
             inputRange: [0, 1],
             outputRange: [0, miniLayout.width + miniLayout.xOffset],
           }),
         },
       ],
     }),
-    [miniLayout, fullscreenAnimation]
+    [miniLayout, fullscreenWithNoMediaAnimation]
   );
 
   const fullscreenPanResponder = React.useMemo(
@@ -122,26 +139,51 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
     [dragOffset, setIsFullscreen]
   );
 
+  let FullscreenWrapper = React.useMemo(() => {
+    if (!usePortal && !isFullscreen) return React.Fragment;
+    const Wrapper: React.FunctionComponent = (props) => (
+      <Modal
+        animationType="slide"
+        presentationStyle="overFullScreen"
+        hardwareAccelerated
+        transparent
+        visible={isFullscreen}
+        {...props}
+      />
+    );
+    return Wrapper;
+  }, [isFullscreen]);
+
   return (
     <React.Fragment>
+      {/* Video View */}
       <Animated.View
         style={
           isFullscreen ? fullscreenPresentationStyles : miniPresentationStyles
         }
       >
-        <VideoPresentationComponent />
+        <VideoPresentationContainer />
       </Animated.View>
-      <Animated.View
-        onLayout={(e: LayoutChangeEvent) => {
-          fullscreenHeightRef.current = e?.nativeEvent?.layout?.height;
-        }}
-        style={fullscreenPresentationStyles}
-        {...fullscreenPanResponder.panHandlers}
-      >
-        <FullScreenPresentationComponent />
-      </Animated.View>
+
+      {/* FullScreen controls */}
+      <FullscreenWrapper>
+        <Animated.View
+          onLayout={(e: LayoutChangeEvent) => {
+            fullscreenHeightRef.current = e?.nativeEvent?.layout?.height;
+          }}
+          style={fullscreenPresentationStyles}
+          {...fullscreenPanResponder.panHandlers}
+        >
+          {usePortal ? <PortalDestination name="fullscreen" /> : null}
+          {FullScreenPresentationComponent ? (
+            <FullScreenPresentationComponent />
+          ) : null}
+        </Animated.View>
+      </FullscreenWrapper>
+
+      {/* Mini controls */}
       <Animated.View style={miniPresentationStyles}>
-        <MiniPresentationComponent />
+        {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
       </Animated.View>
     </React.Fragment>
   );

@@ -1,17 +1,47 @@
-import { AppRegistry } from 'react-native';
-import { getStorybookUI, configure } from '@storybook/react-native';
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import TestOne from './Players/TestOne';
+import { ApollosPlayerContainer } from 'react-native-apollos-player';
+import { NavigationContainer } from '@react-navigation/native';
+import { enableScreens } from 'react-native-screens';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import Reparenting from './Reparenting';
 
-// import stories
-configure(() => {
-  require('./stories');
-}, module);
+enableScreens();
 
-// Refer to https://github.com/storybookjs/storybook/tree/master/app/react-native#start-command-parameters
-// To find allowed options for getStorybookUI
-const StorybookUIRoot = getStorybookUI({});
+const Stack = createNativeStackNavigator();
 
-// If you are using React Native vanilla and after installation you don't see your app name here, write it manually.
-// If you use Expo you can safely remove this line.
-AppRegistry.registerComponent('%APP_NAME%', () => StorybookUIRoot);
+const App = () => {
+  return (
+    <NavigationContainer>
+      <ApollosPlayerContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={TestOne} />
+          <Stack.Screen name="Reparenting" component={Reparenting} />
+          <Stack.Screen
+            name="Push"
+            component={TestOne}
+            options={{ stackPresentation: 'push' }}
+          />
+          <Stack.Screen
+            name="Modal"
+            component={TestOne}
+            options={{ stackPresentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="FullScreenModal"
+            component={TestOne}
+            options={{ stackPresentation: 'fullScreenModal' }}
+          />
+          <Stack.Screen
+            name="FormSheet"
+            component={TestOne}
+            options={{ stackPresentation: 'formSheet' }}
+          />
+        </Stack.Navigator>
+      </ApollosPlayerContainer>
+    </NavigationContainer>
+  );
+};
 
-export default StorybookUIRoot;
+export default App;

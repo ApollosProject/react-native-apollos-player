@@ -6,12 +6,7 @@ import usePlayer from '../usePlayer';
 const MiniPresentation = () => {
   const { setIsFullscreen, isFullscreen } = usePlayer();
   return (
-    <View
-      style={[
-        StyleSheet.absoluteFill,
-        { backgroundColor: 'rgba(255,0,0,0.5)' }, // eslint-disable-line react-native/no-inline-styles
-      ]}
-    >
+    <View style={StyleSheet.absoluteFill}>
       <Text>MiniPresentation</Text>
       <Button
         onPress={() => setIsFullscreen(!isFullscreen)}
