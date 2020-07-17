@@ -1,9 +1,9 @@
-import { NativeModules } from 'react-native';
+import Video from 'react-native-video';
+export { PortalOrigin, PortalDestination } from './portals';
+export { Video };
 
-type ApollosPlayerType = {
-  multiply(a: number, b: number): Promise<number>;
-};
+import Container from './Container';
+export { Container as ApollosPlayerContainer };
 
-const { ApollosPlayer } = NativeModules;
-
-export default ApollosPlayer as ApollosPlayerType;
+import usePlayer from './usePlayer';
+export { usePlayer };

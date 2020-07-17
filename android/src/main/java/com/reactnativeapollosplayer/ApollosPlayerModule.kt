@@ -11,14 +11,4 @@ class ApollosPlayerModule(reactContext: ReactApplicationContext) : ReactContextB
         return "ApollosPlayer"
     }
 
-    // Example method
-    // See https://facebook.github.io/react-native/docs/native-modules-android
-    @ReactMethod
-    fun multiply(a: Int, b: Int, promise: Promise) {
-    
-      promise.resolve(a * b)
-    
-    }
-
-    
 }
