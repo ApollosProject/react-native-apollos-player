@@ -97,14 +97,13 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     [width, height, xOffset, yOffset]
   );
 
-  console.log('Container', { nowPlaying, isPlaying, isFullscreen, playerId });
-
   return (
     <NowPlayingContext.Provider value={nowPlayingState}>
       <PresentationContext.Provider value={presentationState}>
         <MiniPresentationLayoutContext.Provider value={miniLayoutState}>
-          {children}
           <FullscreenSlidingPlayer isMasterPlayer />
+
+          {children}
         </MiniPresentationLayoutContext.Provider>
       </PresentationContext.Provider>
     </NowPlayingContext.Provider>

@@ -8,7 +8,7 @@ const FullscreenPresentation = () => {
 
   return (
     <View style={StyleSheet.absoluteFill}>
-      <Text>FullscreenPresentation</Text>
+      <Text>FullscreenPresentation{'\n\n'}</Text>
       <Button
         onPress={() => setIsFullscreen(!isFullscreen)}
         title="Go Minimized"
