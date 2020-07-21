@@ -9,8 +9,6 @@ import {
   Modal,
 } from 'react-native';
 
-const usePortal = Platform.OS === 'ios';
-
 import {
   PresentationContext,
   MiniPresentationLayoutContext,
@@ -20,11 +18,27 @@ import {
 import VideoPresentationContainer from './VideoPresentationContainer';
 import { PortalDestination } from './portals';
 
-const FullscreenSlidingPlayer: React.FunctionComponent = () => {
+let playerIdCount = 0;
+
+interface FullScreenSlidingPlayerProps {
+  isMasterPlayer?: boolean;
+}
+
+const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerProps> = ({
+  isMasterPlayer = false,
+}) => {
   const {
     MiniPresentationComponent,
     FullScreenPresentationComponent,
   } = React.useContext(PresentationContext);
+
+  const usePortal = !isMasterPlayer && Platform.OS === 'ios';
+
+  const playerId = React.useMemo(() => {
+    if (!usePortal) return '';
+    playerIdCount += 1;
+    return `fullscreenSlidingPlayer-${playerIdCount}`;
+  }, [usePortal]);
 
   const fullscreenAnimation = React.useRef(new Animated.Value(0)).current;
   const noMediaAnimation = React.useRef(new Animated.Value(1)).current;
@@ -39,9 +53,21 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
 
   const miniLayout = React.useContext(MiniPresentationLayoutContext);
 
-  const { nowPlaying, isFullscreen, setIsFullscreen } = React.useContext(
-    NowPlayingContext
-  );
+  const {
+    nowPlaying,
+    isFullscreen,
+    setIsFullscreen,
+    playerId: currentPlayerId,
+    setPlayerId,
+  } = React.useContext(NowPlayingContext);
+
+  React.useEffect(() => {
+    const existingPlayerId = currentPlayerId || '';
+    setPlayerId(playerId);
+    return () => {
+      setPlayerId(existingPlayerId);
+    };
+  }, [playerId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   Animated.spring(fullscreenAnimation, {
     toValue: isFullscreen ? 1 : 0,
@@ -152,7 +178,12 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
       />
     );
     return Wrapper;
-  }, [isFullscreen]);
+  }, [isFullscreen, usePortal]);
+
+  console.log('FullscreenSlidingPlayer', {
+    playerId,
+    isMasterPlayer,
+  });
 
   return (
     <React.Fragment>
@@ -162,7 +193,8 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
           isFullscreen ? fullscreenPresentationStyles : miniPresentationStyles
         }
       >
-        <VideoPresentationContainer />
+        {isMasterPlayer ? <VideoPresentationContainer /> : null}
+        {usePortal ? <PortalDestination name={playerId} /> : null}
       </Animated.View>
 
       {/* FullScreen controls */}
@@ -174,7 +206,6 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
           style={fullscreenPresentationStyles}
           {...fullscreenPanResponder.panHandlers}
         >
-          {usePortal ? <PortalDestination name="fullscreen" /> : null}
           {FullScreenPresentationComponent ? (
             <FullScreenPresentationComponent />
           ) : null}
@@ -183,7 +214,9 @@ const FullscreenSlidingPlayer: React.FunctionComponent = () => {
 
       {/* Mini controls */}
       <Animated.View style={miniPresentationStyles}>
-        {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
+        {MiniPresentationComponent ? (
+          <MiniPresentationComponent playerId={playerId} />
+        ) : null}
       </Animated.View>
     </React.Fragment>
   );

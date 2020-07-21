@@ -14,6 +14,9 @@ export const NowPlayingContext = React.createContext<INowPlaying>({
   setNowPlaying: () => null,
   setIsPlaying: () => null,
   setIsFullscreen: () => null,
+  reset: () => null,
+  setPlayerId: () => null,
+  playerId: '',
   isPlaying: false,
   isFullscreen: false,
 });

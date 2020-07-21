@@ -37,6 +37,17 @@ const Container: React.FunctionComponent<ContainerProps> = ({
   const [nowPlaying, setNowPlaying] = React.useState<IPlayerMedia | null>(null);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
+  const [playerId, setPlayerId] = React.useState<string>('');
+
+  const reset = React.useMemo(
+    () => () => {
+      setNowPlaying(null);
+      // setPlayerId(''); TODO: should we call this?
+      setIsPlaying(false);
+      setIsFullscreen(false);
+    },
+    [setNowPlaying, setIsPlaying, setIsFullscreen]
+  );
 
   const nowPlayingState = React.useMemo(
     () => ({
@@ -46,6 +57,9 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setIsPlaying,
       isFullscreen,
       setIsFullscreen,
+      playerId,
+      setPlayerId,
+      reset,
     }),
     [
       nowPlaying,
@@ -54,6 +68,9 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setIsPlaying,
       isFullscreen,
       setIsFullscreen,
+      playerId,
+      setPlayerId,
+      reset,
     ]
   );
 
@@ -80,12 +97,14 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     [width, height, xOffset, yOffset]
   );
 
+  console.log('Container', { nowPlaying, isPlaying, isFullscreen, playerId });
+
   return (
     <NowPlayingContext.Provider value={nowPlayingState}>
       <PresentationContext.Provider value={presentationState}>
         <MiniPresentationLayoutContext.Provider value={miniLayoutState}>
           {children}
-          <FullscreenSlidingPlayer />
+          <FullscreenSlidingPlayer isMasterPlayer />
         </MiniPresentationLayoutContext.Provider>
       </PresentationContext.Provider>
     </NowPlayingContext.Provider>

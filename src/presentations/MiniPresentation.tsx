@@ -3,13 +3,22 @@ import { Text, View, Button, StyleSheet, Dimensions } from 'react-native';
 
 import usePlayer from '../usePlayer';
 
-const MiniPresentation = () => {
-  const { setIsFullscreen, isFullscreen } = usePlayer();
+export interface MiniPresentationProps {
+  playerId?: string;
+}
+
+const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = ({
+  playerId,
+}) => {
+  const { setIsFullscreen, setPlayerId, isFullscreen } = usePlayer();
   return (
     <View style={StyleSheet.absoluteFill}>
       <Text>MiniPresentation</Text>
       <Button
-        onPress={() => setIsFullscreen(!isFullscreen)}
+        onPress={() => {
+          if (playerId) setPlayerId(playerId);
+          setIsFullscreen(!isFullscreen);
+        }}
         title="Go Fullscreen"
       />
     </View>

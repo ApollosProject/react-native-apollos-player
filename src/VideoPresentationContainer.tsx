@@ -6,13 +6,11 @@ import { PortalOrigin } from './portals';
 
 const VideoPresentationContainer = () => {
   const { VideoPresentationComponent } = React.useContext(PresentationContext);
-  const { isFullscreen } = React.useContext(NowPlayingContext);
+  const { playerId } = React.useContext(NowPlayingContext);
+
   if (!VideoPresentationComponent) return null;
-
-  let destination = isFullscreen ? 'fullscreen' : '';
-
   return (
-    <PortalOrigin destination={destination} style={StyleSheet.absoluteFill}>
+    <PortalOrigin destination={playerId} style={StyleSheet.absoluteFill}>
       <VideoPresentationComponent />
     </PortalOrigin>
   );

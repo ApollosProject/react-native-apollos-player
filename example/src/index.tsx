@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import TestOne from './Players/TestOne';
+import Modal from './Players/Modal';
 import { ApollosPlayerContainer } from 'react-native-apollos-player';
 import { NavigationContainer } from '@react-navigation/native';
 import { enableScreens } from 'react-native-screens';
@@ -25,17 +26,17 @@ const App = () => {
           />
           <Stack.Screen
             name="Modal"
-            component={TestOne}
+            component={Modal}
             options={{ stackPresentation: 'modal' }}
           />
           <Stack.Screen
             name="FullScreenModal"
-            component={TestOne}
+            component={Modal}
             options={{ stackPresentation: 'fullScreenModal' }}
           />
           <Stack.Screen
             name="FormSheet"
-            component={TestOne}
+            component={Modal}
             options={{ stackPresentation: 'formSheet' }}
           />
         </Stack.Navigator>
