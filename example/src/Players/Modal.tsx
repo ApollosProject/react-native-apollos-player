@@ -6,7 +6,7 @@ import { usePlayer, VideoPreviewMiniIOS } from 'react-native-apollos-player';
 
 const TestOne = () => {
   const { setNowPlaying, setIsPlaying, setIsFullscreen } = usePlayer();
-  const { navigate, goBack } = useNavigation();
+  const { push, goBack } = useNavigation<any>();
 
   return (
     <SafeAreaView>
@@ -35,13 +35,11 @@ const TestOne = () => {
       </Text>
       <Text onPress={() => setIsFullscreen(true)}>Open fullscreen</Text>
       <Text>---------</Text>
-      <Text onPress={() => navigate('Reparenting')}>Reparenting test</Text>
-      <Text onPress={() => navigate('Push')}>Push view</Text>
-      <Text onPress={() => navigate('Modal')}>Modal view</Text>
-      <Text onPress={() => navigate('FullScreenModal')}>
-        FullScreenModal view
-      </Text>
-      <Text onPress={() => navigate('FormSheet')}>FormSheet view</Text>
+      <Text onPress={() => push('Reparenting')}>Reparenting test</Text>
+      <Text onPress={() => push('Push')}>Push view</Text>
+      <Text onPress={() => push('Modal')}>Modal view</Text>
+      <Text onPress={() => push('FullScreenModal')}>FullScreenModal view</Text>
+      <Text onPress={() => push('FormSheet')}>FormSheet view</Text>
       <Text onPress={goBack}>Go Back</Text>
       <VideoPreviewMiniIOS />
     </SafeAreaView>
