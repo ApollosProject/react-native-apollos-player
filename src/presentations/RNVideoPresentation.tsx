@@ -1,21 +1,26 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import Video from 'react-native-video';
+import { styled } from '@apollosproject/ui-kit';
 import usePlayer from '../usePlayer';
 
-const styles = StyleSheet.create({
-  background: {
-    backgroundColor: 'black',
+const Container = styled(
+  ({ isFullscreen, theme }: any) => ({
     ...StyleSheet.absoluteFillObject,
-  },
-});
+    backgroundColor: theme.colors.black,
+    borderRadius: !isFullscreen ? theme.sizing.baseUnit : 0,
+    overflow: 'hidden',
+    ...(Platform.select(theme?.shadows?.default) as object),
+  }),
+  'ApollosPlayer.RNVideoPresentation.Container'
+)(View);
 
 const RNVideoPresentation = () => {
-  const { nowPlaying, isPlaying } = usePlayer();
+  const { nowPlaying, isPlaying, isFullscreen } = usePlayer();
   console.log('RNVideo', { nowPlaying, isPlaying });
 
   return (
-    <View style={styles.background}>
+    <Container isFullscreen={isFullscreen}>
       {nowPlaying?.source ? (
         <Video
           source={nowPlaying?.source}
@@ -30,10 +35,10 @@ const RNVideoPresentation = () => {
           // style={StyleSheet.absoluteFill}
           // volume={mediaPlayer.muted ? 0 : 1}
           repeat
-          style={styles.background}
+          style={StyleSheet.absoluteFill}
         />
       ) : null}
-    </View>
+    </Container>
   );
 };
 

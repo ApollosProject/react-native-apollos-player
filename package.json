@@ -42,6 +42,7 @@
   },
   "homepage": "https://github.com/apollosproject/react-native-apollos-player#readme",
   "devDependencies": {
+    "@apollosproject/ui-kit": "1.4.3",
     "@commitlint/config-conventional": "^8.3.4",
     "@react-native-community/bob": "^0.16.2",
     "@react-native-community/eslint-config": "^2.0.0",
@@ -65,9 +66,10 @@
     "typescript": "^3.8.3"
   },
   "peerDependencies": {
+    "@apollosproject/ui-kit": "*",
     "react": "*",
     "react-native": "*",
-    "react-native-video": "^4.4.5"
+    "react-native-video": "*"
   },
   "jest": {
     "preset": "react-native",
@@ -141,5 +143,9 @@
       "module",
       "typescript"
     ]
+  },
+  "dependencies": {
+    "@types/color": "^3.0.1",
+    "color": "^3.1.2"
   }
 }

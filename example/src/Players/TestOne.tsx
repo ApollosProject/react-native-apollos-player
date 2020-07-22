@@ -27,6 +27,9 @@ const TestOne = () => {
               uri:
                 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
             },
+            presentationProps: {
+              badge: <Text style={{ color: 'white' }}>Live</Text>,
+            },
           });
           setIsPlaying(true);
         }}
