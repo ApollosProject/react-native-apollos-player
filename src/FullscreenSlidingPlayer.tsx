@@ -20,6 +20,12 @@ import VideoPresentationContainer from './VideoPresentationContainer';
 import VideoOutlet from './VideoOutlet';
 
 interface FullScreenSlidingPlayerProps {
+  /**
+   * Whether to treat as the "master" (root-level) player object.
+   * When true, a <VideoPresentationContainer /> will be mounted.
+   * This is important as the native-side portal code needs something to
+   * treat as the base node to "portal" everywhere else.
+   */
   isMasterPlayer?: boolean;
 }
 const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerProps> = ({
@@ -30,13 +36,26 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     FullScreenPresentationComponent,
   } = React.useContext(PresentationContext);
 
+  // Tracks the opening/closing animation. Since we use a <Modal> on iOS,
+  // ths is effectively only really used fully on Android
+  // (although the animation is still triggered on iOS to KISS).
   const fullscreenAnimation = React.useRef(new Animated.Value(0)).current;
+
+  // Tracks the sliding animation the mini-player makes when it opens / closes
   const noMediaAnimation = React.useRef(new Animated.Value(1)).current;
+
+  // Tracks the user dragging the fullscreen player down
   const dragOffset = React.useRef(new Animated.Value(0)).current;
+
+  // This is set as a Ref since it is mutated (onLayout call below)
   const fullscreenHeightRef = React.useRef(Dimensions.get('window').height);
+
+  // Used to render position of the fullscreen slider
   const fullScreenWithOffset = React.useRef(
     Animated.add(fullscreenAnimation, dragOffset)
   ).current;
+
+  // Used to render position of the mini player
   const fullscreenWithNoMediaAnimation = React.useRef(
     Animated.add(fullscreenAnimation, noMediaAnimation)
   ).current;
@@ -61,7 +80,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     () => [
       StyleSheet.absoluteFill,
       {
-        zIndex: 9999,
+        zIndex: 9999, // 🎉
         opacity: fullScreenWithOffset.interpolate({
           inputRange: [0, 0.5],
           outputRange: [0, 1],
@@ -82,7 +101,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
 
   const miniPresentationStyles = React.useMemo(
     () => ({
-      zIndex: 9999,
+      zIndex: 9999, // 🎉
       position: 'absolute',
       right: miniLayout.xOffset,
       bottom: miniLayout.yOffset,
@@ -108,7 +127,8 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     () =>
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, { dx, dy }) =>
-          Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10, // set pan responder only when we move enough in the Y-axis
+          // set pan responder only when we move enough in the Y-axis
+          Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10,
 
         onPanResponderMove: (_, { dy }) => {
           // Calculate the amount you've offsetted the cover
@@ -124,13 +144,13 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
           // or stay full screen and reset back up
           let _isFullscreen = true;
           if (Math.abs(gestureVelocity) > 0.5) {
-            // ^^ fast!
+            // ^^ the user is dragging fast!
             if (gestureVelocity > 0) {
               // ^^ but in the wrong direction!
               _isFullscreen = false;
             }
           } else if (gestureDistance >= fullscreenHeightRef.current / 2) {
-            // ^^ not fast, but has dragged atleast half-way
+            // ^^ not dragging fast, but has dragged atleast half-way
             _isFullscreen = false;
           }
 
@@ -142,6 +162,8 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
   );
 
   let FullscreenWrapper = React.useMemo(() => {
+    // We have to wrap fullscreen view in <Modal> on iOS in order to make sure
+    // the player is presented on top of ReactNavigation Native Navigation views
     if (Platform.OS !== 'ios') return React.Fragment;
     const Wrapper: React.FunctionComponent = (props) => (
       <Modal

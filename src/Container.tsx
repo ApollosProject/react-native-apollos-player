@@ -14,10 +14,18 @@ import MiniPresentation, {
 import RNVideoPresentation from './presentations/RNVideoPresentation';
 
 interface ContainerProps extends IPresentationComponents {
+  /**
+   * Controls the layout and size of the mini player.
+   */
   miniPresentationLayout?: {
     width?: number;
     height?: number;
+    /** additional offset from horizontal edge of screen */
     xOffset?: number;
+    /**
+     * additional offset from vertical edge of screen.
+     * Ex: Increase when rendering above a tab-bar
+     */
     yOffset?: number;
   };
 }
@@ -42,7 +50,6 @@ const Container: React.FunctionComponent<ContainerProps> = ({
   const reset = React.useMemo(
     () => () => {
       setNowPlaying(null);
-      // setPlayerId(''); TODO: should we call this?
       setIsPlaying(false);
       setIsFullscreen(false);
     },
