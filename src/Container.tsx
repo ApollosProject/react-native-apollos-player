@@ -5,6 +5,7 @@ import {
   NowPlayingContext,
   PresentationContext,
   MiniPresentationLayoutContext,
+  InternalPlayerContext,
 } from './context';
 
 import FullscreenPresentation from './presentations/FullscreenPresentation';
@@ -46,6 +47,12 @@ const Container: React.FunctionComponent<ContainerProps> = ({
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
   const [playerId, setPlayerId] = React.useState<string>('');
+  const [seek, setSeekHandler] = React.useState<(seekTo: number) => void>(
+    () => {}
+  );
+  const [skip, setSkipHandler] = React.useState<(skipBy: number) => void>(
+    () => {}
+  );
 
   const reset = React.useMemo(
     () => () => {
@@ -64,9 +71,9 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setIsPlaying,
       isFullscreen,
       setIsFullscreen,
-      playerId,
-      setPlayerId,
       reset,
+      seek,
+      skip,
     }),
     [
       nowPlaying,
@@ -75,10 +82,20 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setIsPlaying,
       isFullscreen,
       setIsFullscreen,
+      reset,
+      seek,
+      skip,
+    ]
+  );
+
+  const internalPlayerState = React.useMemo(
+    () => ({
       playerId,
       setPlayerId,
-      reset,
-    ]
+      setSeekHandler,
+      setSkipHandler,
+    }),
+    [playerId, setPlayerId, setSeekHandler, setSkipHandler]
   );
 
   const presentationState = React.useMemo(
@@ -108,9 +125,10 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     <NowPlayingContext.Provider value={nowPlayingState}>
       <PresentationContext.Provider value={presentationState}>
         <MiniPresentationLayoutContext.Provider value={miniLayoutState}>
-          <FullscreenSlidingPlayer isMasterPlayer />
-
-          {children}
+          <InternalPlayerContext.Provider value={internalPlayerState}>
+            <FullscreenSlidingPlayer isMasterPlayer />
+            {children}
+          </InternalPlayerContext.Provider>
         </MiniPresentationLayoutContext.Provider>
       </PresentationContext.Provider>
     </NowPlayingContext.Provider>

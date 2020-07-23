@@ -2,41 +2,14 @@ import * as React from 'react';
 import { Text, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { usePlayer } from 'react-native-apollos-player';
+import PlayerExamples from './Examples';
 
 const TestOne = () => {
-  const { setNowPlaying, setIsPlaying, setIsFullscreen } = usePlayer();
   const { navigate, goBack } = useNavigation();
 
   return (
     <SafeAreaView>
-      <Text
-        onPress={() => {
-          setNowPlaying({
-            source: require('./broadchurch.mp4'),
-          });
-          setIsPlaying(true);
-        }}
-      >
-        Play local MP4
-      </Text>
-      <Text
-        onPress={() => {
-          setNowPlaying({
-            source: {
-              uri:
-                'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
-            },
-            presentationProps: {
-              badge: <Text style={{ color: 'white' }}>Live</Text>,
-            },
-          });
-          setIsPlaying(true);
-        }}
-      >
-        Play streaming M3u8
-      </Text>
-      <Text onPress={() => setIsFullscreen(true)}>Open fullscreen</Text>
+      <PlayerExamples />
       <Text>---------</Text>
       <Text onPress={() => navigate('Reparenting')}>Reparenting test</Text>
       <Text onPress={() => navigate('Push')}>Push view</Text>

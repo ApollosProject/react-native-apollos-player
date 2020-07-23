@@ -27,16 +27,25 @@ export interface INowPlaying {
   isPlaying: boolean;
   /** Whether to present fullscreen presentation */
   isFullscreen: boolean;
-  /**
-   * Used internally to control which player instance is currently being
-   * portaled. TODO: Consider moving to some non-exposed state instance */
-  playerId: string;
+
+  seek: (seekTo: number) => void;
+  skip: (skipBy: number) => void;
 
   setNowPlaying: (props: IPlayerMedia) => void;
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setIsFullscreen: React.Dispatch<React.SetStateAction<boolean>>;
-  setPlayerId: React.Dispatch<React.SetStateAction<string>>;
   reset: (props: any) => void;
+}
+
+export interface IInternalPlayer {
+  playerId: string;
+  setPlayerId: React.Dispatch<React.SetStateAction<string>>;
+  setSeekHandler: React.Dispatch<
+    React.SetStateAction<(seekTo: number) => void>
+  >;
+  setSkipHandler: React.Dispatch<
+    React.SetStateAction<(seekBy: number) => void>
+  >;
 }
 
 export interface IPresentationComponents {

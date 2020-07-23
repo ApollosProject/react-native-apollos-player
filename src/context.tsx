@@ -4,6 +4,7 @@ import type {
   IMiniPresentationLayout,
   IPresentationComponents,
   INowPlaying,
+  IInternalPlayer,
 } from './types';
 import FullscreenPresentation from './presentations/FullscreenPresentation';
 import MiniPresentation from './presentations/MiniPresentation';
@@ -15,10 +16,10 @@ export const NowPlayingContext = React.createContext<INowPlaying>({
   setIsPlaying: () => null,
   setIsFullscreen: () => null,
   reset: () => null,
-  setPlayerId: () => null,
-  playerId: '',
   isPlaying: false,
   isFullscreen: false,
+  seek: () => null,
+  skip: () => null,
 });
 
 export const PresentationContext = React.createContext<IPresentationComponents>(
@@ -28,6 +29,13 @@ export const PresentationContext = React.createContext<IPresentationComponents>(
     FullScreenPresentationComponent: RNVideoPresentation,
   }
 );
+
+export const InternalPlayerContext = React.createContext<IInternalPlayer>({
+  setPlayerId: () => null,
+  setSeekHandler: () => null,
+  setSkipHandler: () => null,
+  playerId: '',
+});
 
 export const MiniPresentationLayoutContext = React.createContext<
   IMiniPresentationLayout

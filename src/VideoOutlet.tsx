@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PortalDestination } from './portals';
 
-import { NowPlayingContext } from './context';
+import { InternalPlayerContext } from './context';
 
 let playerIdCount = 0;
 
@@ -10,7 +10,7 @@ let playerIdCount = 0;
 let players: Array<string> = [];
 
 const VideoOutlet: React.FunctionComponent = () => {
-  const { setPlayerId } = React.useContext(NowPlayingContext);
+  const { setPlayerId } = React.useContext(InternalPlayerContext);
 
   const playerId = React.useMemo(() => {
     playerIdCount += 1;
