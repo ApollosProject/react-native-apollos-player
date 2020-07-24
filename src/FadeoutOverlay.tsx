@@ -14,9 +14,11 @@ const FadeoutOverlay: React.FunctionComponent<{
   style?: any;
   fadeTimeoutMs?: number;
   onPress?: (props: { isVisible: boolean }) => void;
-}> = ({ children, fadeTimeoutMs = 5000, style, onPress, ...other }) => {
+}> = ({ children, fadeTimeoutMs = 5000, style, ...other }) => {
   const { isPlaying } = usePlayer();
   const { isControlVisibilityLocked } = React.useContext(InternalPlayerContext);
+
+  const [isPressing, setIsPressing] = React.useState(false);
 
   const [isVisible, setIsVisible] = React.useState(
     !isPlaying || isControlVisibilityLocked
@@ -28,9 +30,13 @@ const FadeoutOverlay: React.FunctionComponent<{
     new Animated.Value(shouldBeVisible ? 1 : 0)
   ).current;
 
-  const handlePress = () => {
-    if (onPress) onPress({ isVisible });
-    setIsVisible(!isVisible);
+  const handlePressIn = () => {
+    setIsVisible(true);
+    setIsPressing(true);
+  };
+
+  const handlePressOut = () => {
+    setIsPressing(false);
   };
 
   React.useEffect(() => {
@@ -40,7 +46,7 @@ const FadeoutOverlay: React.FunctionComponent<{
     }).start();
 
     let timeout: ReturnType<typeof setTimeout>;
-    if (shouldBeVisible && isPlaying && !isControlVisibilityLocked) {
+    if (!isPressing) {
       timeout = setTimeout(() => setIsVisible(false), fadeTimeoutMs);
     }
 
@@ -48,6 +54,7 @@ const FadeoutOverlay: React.FunctionComponent<{
       if (timeout) clearTimeout(timeout);
     };
   }, [
+    isPressing,
     isPlaying,
     isVisible,
     isControlVisibilityLocked,
@@ -60,7 +67,8 @@ const FadeoutOverlay: React.FunctionComponent<{
     <Animated.View style={[{ opacity: fadeAnimation }, style]} {...other}>
       <TouchableWithoutFeedback
         style={StyleSheet.absoluteFill}
-        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
       >
         <View style={StyleSheet.absoluteFill} />
       </TouchableWithoutFeedback>
