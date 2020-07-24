@@ -211,6 +211,13 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
         hardwareAccelerated
         transparent
         visible={isFullscreen}
+        supportedOrientations={[
+          'portrait',
+          'portrait-upside-down',
+          'landscape',
+          'landscape-left',
+          'landscape-right',
+        ]}
         {...props}
       />
     );

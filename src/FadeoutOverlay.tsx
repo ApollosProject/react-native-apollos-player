@@ -31,7 +31,7 @@ const FadeoutOverlay: React.FunctionComponent<{
   ).current;
 
   const handlePressIn = () => {
-    setIsVisible(true);
+    setIsVisible(!isVisible);
     setIsPressing(true);
   };
 

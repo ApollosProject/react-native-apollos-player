@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, Button } from 'react-native';
+import { Text, Button, StatusBar } from 'react-native';
 import { ThemeMixin } from '@apollosproject/ui-kit';
 
 import FadeoutOverlay from '../FadeoutOverlay';
@@ -18,6 +18,7 @@ const FullscreenPresentation = () => {
 
   return (
     <ThemeMixin mixin={{ type: 'dark' }}>
+      <StatusBar hidden={isFullscreen} />
       <FadeoutOverlay>
         <Text>FullscreenPresentation{'\n\n'}</Text>
         <Button
