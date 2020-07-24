@@ -34,6 +34,8 @@ export const InternalPlayerContext = React.createContext<IInternalPlayer>({
   setPlayerId: () => null,
   setSeekHandler: () => null,
   setSkipHandler: () => null,
+  setIsControlVisibilityLocked: () => null,
+  isControlVisibilityLocked: true,
   playerId: '',
 });
 

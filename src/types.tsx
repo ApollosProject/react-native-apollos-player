@@ -46,6 +46,8 @@ export interface IInternalPlayer {
   setSkipHandler: React.Dispatch<
     React.SetStateAction<(seekBy: number) => void>
   >;
+  setIsControlVisibilityLocked: React.Dispatch<React.SetStateAction<boolean>>;
+  isControlVisibilityLocked: boolean;
 }
 
 export interface IPresentationComponents {

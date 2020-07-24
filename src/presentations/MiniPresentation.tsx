@@ -1,38 +1,32 @@
 import * as React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import Color from 'color';
+import { View, Dimensions } from 'react-native';
 
-import {
-  PaddedView,
-  Touchable,
-  Icon,
-  ThemeMixin,
-  styled,
-} from '@apollosproject/ui-kit';
+import { Touchable, Icon, ThemeMixin, styled } from '@apollosproject/ui-kit';
 
 import usePlayer from '../usePlayer';
+import FadeoutOverlay from '../FadeoutOverlay';
 
 export interface MiniPresentationProps {}
 
-const Container = styled(
-  ({ theme }: any) => ({
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: theme?.sizing?.baseUnit,
-    backgroundColor: Color(theme?.colors?.background?.screen)
-      .alpha(theme?.alpha?.low)
-      .string(),
-  }),
-  'ApollosPlayer.MiniPresentation.Container'
-)(PaddedView);
-
-const PositioningContainer = styled({ width: '100%', height: '100%' })(View);
+const MiniFadeoutOverlay = styled(({ theme }: any) => ({
+  borderRadius: theme?.sizing?.baseUnit,
+}))(FadeoutOverlay);
 
 const FullscreenButtonContainer = styled(
-  {
+  ({ iconSize, theme }: any) => ({
     position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
+    right: iconSize / 1.5 || theme?.sizing?.baseUnit,
+    bottom: iconSize / 1.5 || theme?.sizing?.baseUnit,
+  }),
+  'ApollosPlayer.MiniPresentation.FullscreenButtonContainer'
+)(View);
+
+const PlayPauseButtonContainer = styled(
+  ({ iconSize, theme }: any) => ({
+    position: 'absolute',
+    top: iconSize / 1.5 || theme?.sizing?.baseUnit,
+    left: iconSize / 1.5 || theme?.sizing?.baseUnit,
+  }),
   'ApollosPlayer.MiniPresentation.FullscreenButtonContainer'
 )(View);
 
@@ -46,7 +40,13 @@ const BadgeContainer = styled(
 )(View);
 
 const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
-  const { setIsFullscreen, isFullscreen, nowPlaying } = usePlayer();
+  const {
+    setIsFullscreen,
+    isFullscreen,
+    isPlaying,
+    setIsPlaying,
+    nowPlaying,
+  } = usePlayer();
   const [layoutWidth, setLayoutWidth] = React.useState(
     Dimensions.get('window').width
   );
@@ -58,26 +58,33 @@ const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
 
   return (
     <ThemeMixin mixin={{ type: 'dark' }}>
-      <Container
+      <MiniFadeoutOverlay
         onLayout={(e: any) => {
           setLayoutWidth(e?.nativeEvent?.layout?.width);
         }}
+        onPress={({ isVisible }: { isVisible: boolean }) =>
+          isVisible && setIsPlaying(!isPlaying)
+        }
       >
-        <PositioningContainer>
-          <FullscreenButtonContainer>
-            <Touchable
-              hitSlop={{ bottom: 24, left: 24, top: 24, right: 24 }}
-              onPress={() => setIsFullscreen(!isFullscreen)}
-            >
-              <Icon name="fullscreen" size={iconSize} />
-            </Touchable>
-          </FullscreenButtonContainer>
+        <PlayPauseButtonContainer iconSize={iconSize}>
+          <Touchable
+            hitSlop={{ bottom: 8, left: 8, top: 8, right: 8 }}
+            onPress={() => setIsPlaying(!isPlaying)}
+          >
+            <Icon name={isPlaying ? 'pause' : 'play'} size={iconSize} />
+          </Touchable>
+        </PlayPauseButtonContainer>
+        <FullscreenButtonContainer iconSize={iconSize}>
+          <Touchable
+            hitSlop={{ bottom: 8, left: 8, top: 8, right: 8 }}
+            onPress={() => setIsFullscreen(!isFullscreen)}
+          >
+            <Icon name="fullscreen" size={iconSize} />
+          </Touchable>
+        </FullscreenButtonContainer>
 
-          <BadgeContainer>
-            {nowPlaying?.presentationProps?.badge}
-          </BadgeContainer>
-        </PositioningContainer>
-      </Container>
+        <BadgeContainer>{nowPlaying?.presentationProps?.badge}</BadgeContainer>
+      </MiniFadeoutOverlay>
     </ThemeMixin>
   );
 };

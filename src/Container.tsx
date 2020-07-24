@@ -53,6 +53,10 @@ const Container: React.FunctionComponent<ContainerProps> = ({
   const [skip, setSkipHandler] = React.useState<(skipBy: number) => void>(
     () => {}
   );
+  const [
+    isControlVisibilityLocked,
+    setIsControlVisibilityLocked,
+  ] = React.useState<boolean>(false);
 
   const reset = React.useMemo(
     () => () => {
@@ -94,8 +98,17 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setPlayerId,
       setSeekHandler,
       setSkipHandler,
+      setIsControlVisibilityLocked,
+      isControlVisibilityLocked,
     }),
-    [playerId, setPlayerId, setSeekHandler, setSkipHandler]
+    [
+      playerId,
+      setPlayerId,
+      setSeekHandler,
+      setSkipHandler,
+      setIsControlVisibilityLocked,
+      isControlVisibilityLocked,
+    ]
   );
 
   const presentationState = React.useMemo(
