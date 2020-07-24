@@ -15,12 +15,18 @@ const FadeoutOverlay: React.FunctionComponent<{
   fadeTimeoutMs?: number;
   onPress?: (props: { isVisible: boolean }) => void;
 }> = ({ children, fadeTimeoutMs = 5000, style, onPress, ...other }) => {
-  const [isVisible, setIsVisible] = React.useState(true);
-
-  const fadeAnimation = React.useRef(new Animated.Value(1)).current;
-
   const { isPlaying } = usePlayer();
   const { isControlVisibilityLocked } = React.useContext(InternalPlayerContext);
+
+  const [isVisible, setIsVisible] = React.useState(
+    !isPlaying || isControlVisibilityLocked
+  );
+
+  const shouldBeVisible = !isPlaying || isVisible || isControlVisibilityLocked;
+
+  const fadeAnimation = React.useRef(
+    new Animated.Value(shouldBeVisible ? 1 : 0)
+  ).current;
 
   const handlePress = () => {
     if (onPress) onPress({ isVisible });
@@ -28,9 +34,6 @@ const FadeoutOverlay: React.FunctionComponent<{
   };
 
   React.useEffect(() => {
-    const shouldBeVisible =
-      !isPlaying || isVisible || isControlVisibilityLocked;
-
     Animated.spring(fadeAnimation, {
       toValue: shouldBeVisible ? 1 : 0,
       useNativeDriver: true,
@@ -50,6 +53,7 @@ const FadeoutOverlay: React.FunctionComponent<{
     isControlVisibilityLocked,
     fadeAnimation,
     fadeTimeoutMs,
+    shouldBeVisible,
   ]);
 
   return (
