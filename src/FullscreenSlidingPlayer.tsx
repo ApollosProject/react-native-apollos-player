@@ -45,14 +45,20 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
   const noMediaAnimation = React.useRef(new Animated.Value(1)).current;
 
   // Tracks the user dragging the fullscreen player down
-  const dragOffset = React.useRef(new Animated.Value(0)).current;
+  const fullscreenDragOffset = React.useRef(new Animated.Value(0)).current;
+
+  // Tracks the user dragging the mini player around
+  const miniDragOffset = React.useRef([
+    new Animated.Value(0),
+    new Animated.Value(0),
+  ]).current;
 
   // This is set as a Ref since it is mutated (onLayout call below)
   const fullscreenHeightRef = React.useRef(Dimensions.get('window').height);
 
   // Used to render position of the fullscreen slider
   const fullScreenWithOffset = React.useRef(
-    Animated.add(fullscreenAnimation, dragOffset)
+    Animated.add(fullscreenAnimation, fullscreenDragOffset)
   ).current;
 
   // Used to render position of the mini player
@@ -118,9 +124,15 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
             outputRange: [0, miniLayout.width + miniLayout.xOffset],
           }),
         },
+        {
+          translateX: miniDragOffset[0],
+        },
+        {
+          translateY: miniDragOffset[1],
+        },
       ],
     }),
-    [miniLayout, fullscreenWithNoMediaAnimation]
+    [miniLayout, fullscreenWithNoMediaAnimation, miniDragOffset]
   );
 
   const fullscreenPanResponder = React.useMemo(
@@ -133,7 +145,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
         onPanResponderMove: (_, { dy }) => {
           // Calculate the amount you've offsetted the cover
           const _dragOffset = Math.min(0, -dy / fullscreenHeightRef.current);
-          dragOffset.setValue(_dragOffset);
+          fullscreenDragOffset.setValue(_dragOffset);
         },
 
         onPanResponderRelease: (_, { dy, vy }) => {
@@ -154,11 +166,38 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
             _isFullscreen = false;
           }
 
-          dragOffset.setValue(0);
+          fullscreenDragOffset.setValue(0);
           setIsFullscreen(_isFullscreen);
         },
       }),
-    [dragOffset, setIsFullscreen]
+    [fullscreenDragOffset, setIsFullscreen]
+  );
+
+  const miniPanResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, { dx, dy }) =>
+          // set pan responder only when we move enough in either Y-axis
+          Math.abs(dy) > 10 || Math.abs(dx) > 10,
+
+        onPanResponderMove: (_, { dy, dx }) => {
+          // Dividing by two to create some friction
+          miniDragOffset[0].setValue(dx / 2);
+          miniDragOffset[1].setValue(dy / 2);
+        },
+
+        onPanResponderRelease: () => {
+          Animated.spring(miniDragOffset[0], {
+            toValue: 0,
+            useNativeDriver: true,
+          }).start();
+          Animated.spring(miniDragOffset[1], {
+            toValue: 0,
+            useNativeDriver: true,
+          }).start();
+        },
+      }),
+    [miniDragOffset]
   );
 
   let FullscreenWrapper = React.useMemo(() => {
@@ -208,7 +247,10 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
       </FullscreenWrapper>
 
       {/* Mini controls */}
-      <Animated.View style={miniPresentationStyles}>
+      <Animated.View
+        style={miniPresentationStyles}
+        {...miniPanResponder.panHandlers}
+      >
         {!isMasterPlayer && !isFullscreen ? <VideoOutlet /> : null}
         {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
       </Animated.View>

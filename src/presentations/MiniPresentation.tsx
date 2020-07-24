@@ -31,11 +31,11 @@ const PlayPauseButtonContainer = styled(
 )(View);
 
 const BadgeContainer = styled(
-  {
+  ({ iconSize, theme }: any) => ({
     position: 'absolute',
-    left: 0,
-    bottom: 0,
-  },
+    bottom: iconSize / 1.5 || theme?.sizing?.baseUnit,
+    left: iconSize / 1.5 || theme?.sizing?.baseUnit,
+  }),
   'ApollosPlayer.MiniPresentation.FullscreenButtonContainer'
 )(View);
 
@@ -62,9 +62,6 @@ const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
         onLayout={(e: any) => {
           setLayoutWidth(e?.nativeEvent?.layout?.width);
         }}
-        onPress={({ isVisible }: { isVisible: boolean }) =>
-          isVisible && setIsPlaying(!isPlaying)
-        }
       >
         <PlayPauseButtonContainer iconSize={iconSize}>
           <Touchable
@@ -83,7 +80,9 @@ const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
           </Touchable>
         </FullscreenButtonContainer>
 
-        <BadgeContainer>{nowPlaying?.presentationProps?.badge}</BadgeContainer>
+        <BadgeContainer iconSize={iconSize}>
+          {nowPlaying?.presentationProps?.badge}
+        </BadgeContainer>
       </MiniFadeoutOverlay>
     </ThemeMixin>
   );
@@ -92,7 +91,7 @@ const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
 const screen = Dimensions.get('screen');
 
 export const defaultMiniPlayerSize = {
-  width: Math.min(screen.width * 0.3, 240),
+  width: Math.min(screen.width * 0.4, 240),
   height: 0,
   xOffset: 16,
   yOffset: 24,

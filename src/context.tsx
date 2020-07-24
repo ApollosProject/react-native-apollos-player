@@ -12,12 +12,12 @@ import RNVideoPresentation from './presentations/RNVideoPresentation';
 
 export const NowPlayingContext = React.createContext<INowPlaying>({
   nowPlaying: null,
+  isPlaying: false,
+  isFullscreen: false,
   setNowPlaying: () => null,
   setIsPlaying: () => null,
   setIsFullscreen: () => null,
   reset: () => null,
-  isPlaying: false,
-  isFullscreen: false,
   seek: () => null,
   skip: () => null,
 });
