@@ -31,8 +31,11 @@ const FadeoutOverlay: React.FunctionComponent<{
   ).current;
 
   const handlePressIn = () => {
-    setIsVisible(!isVisible);
     setIsPressing(true);
+  };
+
+  const handlePress = () => {
+    setIsVisible(!isVisible);
   };
 
   const handlePressOut = () => {
@@ -63,16 +66,25 @@ const FadeoutOverlay: React.FunctionComponent<{
     shouldBeVisible,
   ]);
 
+  const touchable = (
+    <TouchableWithoutFeedback
+      style={StyleSheet.absoluteFill}
+      onPressIn={handlePressIn}
+      onPress={handlePress}
+      onPressOut={handlePressOut}
+    >
+      <View style={StyleSheet.absoluteFill} />
+    </TouchableWithoutFeedback>
+  );
+
   return (
     <Animated.View style={[{ opacity: fadeAnimation }, style]} {...other}>
-      <TouchableWithoutFeedback
-        style={StyleSheet.absoluteFill}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <View style={StyleSheet.absoluteFill} />
-      </TouchableWithoutFeedback>
+      {touchable}
+
       {children}
+
+      {/* Block touches when overlay visible */}
+      {!shouldBeVisible ? touchable : null}
     </Animated.View>
   );
 };
