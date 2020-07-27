@@ -15,7 +15,7 @@ const FadeoutOverlay: React.FunctionComponent<{
   fadeTimeoutMs?: number;
   onPress?: (props: { isVisible: boolean }) => void;
 }> = ({ children, fadeTimeoutMs = 5000, style, ...other }) => {
-  const { isPlaying, isFullscreen } = usePlayer();
+  const { nowPlaying, isPlaying, isFullscreen } = usePlayer();
   const { isControlVisibilityLocked } = React.useContext(InternalPlayerContext);
 
   const [isPressing, setIsPressing] = React.useState(false);
@@ -42,10 +42,11 @@ const FadeoutOverlay: React.FunctionComponent<{
     setIsPressing(false);
   };
 
-  // when player isFullscreen state changes, toggle visibility timers
+  // when player isFullscreen state changes, or when the media changes,
+  // toggle visibility timers
   React.useEffect(() => {
     setIsVisible(true);
-  }, [isFullscreen]);
+  }, [isFullscreen, nowPlaying]);
 
   React.useEffect(() => {
     Animated.spring(fadeAnimation, {
