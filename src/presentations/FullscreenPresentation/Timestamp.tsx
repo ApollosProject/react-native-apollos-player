@@ -6,7 +6,6 @@ import { InternalPlayerContext } from '../../context';
 
 const TimeText = styled(
   {
-    width: 50,
     textAlign: 'center',
     alignItems: 'center',
   },

@@ -27,7 +27,7 @@ const StyledButtonIcon = withTheme(({ theme }: any) => ({
     marginTop: '50%',
     marginHorizontal: theme.sizing.baseUnit / 2,
     padding: theme.sizing.baseUnit / 1.5,
-    backgroundColor: Color(theme?.colors?.darkTertiary).fade(0.3),
+    backgroundColor: Color(theme?.colors?.darkSecondary).fade(0.3),
   },
 }))(ButtonIcon);
 

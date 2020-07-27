@@ -30,8 +30,6 @@ const RNVideoPresentation = () => {
     seekableDuration: 0,
   });
 
-  console.log({ progressHandlers });
-
   const handleProgress = React.useMemo(
     () => (playhead: {
       currentTime: number;

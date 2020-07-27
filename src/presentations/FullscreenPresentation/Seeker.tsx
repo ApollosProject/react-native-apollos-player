@@ -9,9 +9,10 @@ import { InternalPlayerContext } from '../../context';
 import Timestamp from './Timestamp';
 
 const Container = styled(
-  {
+  ({ theme }: any) => ({
     width: '100%',
-  },
+    paddingHorizontal: theme?.sizing?.baseUnit,
+  }),
   'ui-media.MediaPlayer.Seeker.Container'
 )(View);
 
@@ -32,8 +33,8 @@ const Track = styled(
     overflow: 'hidden',
     borderRadius: minimal ? 0 : knobSize / 3,
     backgroundColor: minimal
-      ? theme.colors.transparent
-      : theme.colors.darkTertiary,
+      ? theme?.colors?.transparent
+      : theme?.colors?.text?.tertiary,
   }),
   'ui-media.MediaPlayer.Seeker.Track'
 )(View);
@@ -41,7 +42,7 @@ const Track = styled(
 const ProgressBar = styled(
   ({ theme }: any) => ({
     height: theme?.sizing?.baseUnit,
-    backgroundColor: theme?.colors?.lightSecondary,
+    backgroundColor: theme?.colors?.text?.secondary,
   }),
   'ui-media.MediaPlayer.Seeker.ProgressBar'
 )(View);
@@ -179,7 +180,7 @@ const Seeker = ({
 };
 
 const ThemedSeeker = withTheme(({ theme }: any) => ({
-  knobSize: Math.floor(theme?.sizing?.baseBorderRadius * 0.5),
+  knobSize: Math.floor(theme?.sizing?.baseUnit * 0.75),
 }))(Seeker);
 
 export default ThemedSeeker;
