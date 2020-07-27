@@ -26,6 +26,9 @@ const Header: React.FunctionComponent = () => {
         {nowPlaying?.presentationProps?.coverImage ? (
           <Image source={nowPlaying.presentationProps.coverImage} />
         ) : null}
+        {nowPlaying?.presentationProps?.badge
+          ? nowPlaying?.presentationProps?.badge
+          : null}
         <H4>{nowPlaying?.presentationProps?.title}</H4>
         <BodySmall>{nowPlaying?.presentationProps?.description}</BodySmall>
       </PaddedView>

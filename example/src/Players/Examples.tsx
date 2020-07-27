@@ -26,12 +26,32 @@ const Examples = () => {
       <Text
         onPress={() => {
           setNowPlaying({
+            source: require('./broadchurch.mp4'),
+            presentationProps: {
+              title: 'Video Title',
+              description: 'Video Description',
+            },
+          });
+          setIsPlaying(true);
+        }}
+      >
+        Play local MP4 (no cover image)
+      </Text>
+      <Text
+        onPress={() => {
+          setNowPlaying({
             source: {
               uri:
                 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
             },
             presentationProps: {
-              badge: <Text style={{ color: 'white' }}>Live</Text>,
+              title: 'Video Title',
+              description: 'Video Description',
+              badge: (
+                <Text style={{ color: 'white' }}>
+                  <Text style={{ color: 'red' }}>●</Text> Live
+                </Text>
+              ),
             },
           });
           setIsPlaying(true);
