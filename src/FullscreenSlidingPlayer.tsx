@@ -166,7 +166,15 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
             _isFullscreen = false;
           }
 
-          fullscreenDragOffset.setValue(0);
+          if (_isFullscreen) {
+            Animated.spring(fullscreenDragOffset, {
+              toValue: 0,
+              useNativeDriver: true,
+            }).start();
+          } else {
+            fullscreenDragOffset.setValue(0);
+          }
+
           setIsFullscreen(_isFullscreen);
         },
       }),

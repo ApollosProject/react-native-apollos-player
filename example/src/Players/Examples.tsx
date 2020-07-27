@@ -15,6 +15,7 @@ const Examples = () => {
             presentationProps: {
               title: 'Video Title',
               description: 'Video Description',
+              coverImage: { uri: 'https://picsum.photos/100/100' },
             },
           });
           setIsPlaying(true);

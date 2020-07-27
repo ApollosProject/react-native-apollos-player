@@ -1,5 +1,9 @@
 import * as React from 'react';
-import type { IPlayerMedia, IPresentationComponents } from './types';
+import type {
+  IPlayerMedia,
+  IPresentationComponents,
+  IProgressProp,
+} from './types';
 import FullscreenSlidingPlayer from './FullscreenSlidingPlayer';
 import {
   NowPlayingContext,
@@ -57,6 +61,9 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     isControlVisibilityLocked,
     setIsControlVisibilityLocked,
   ] = React.useState<boolean>(false);
+  const [progressHandlers, setProgressHandlers] = React.useState<
+    Array<(props: IProgressProp) => void>
+  >([]);
 
   const reset = React.useMemo(
     () => () => {
@@ -92,8 +99,21 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     ]
   );
 
+  const onProgress = React.useMemo(
+    () => (handlerToAdd: (props: IProgressProp) => void) => {
+      setProgressHandlers((prevState) => [...prevState, handlerToAdd]);
+      return () =>
+        setProgressHandlers((prevState) =>
+          prevState.filter((handler) => handler === handlerToAdd)
+        );
+    },
+    [setProgressHandlers]
+  );
+
   const internalPlayerState = React.useMemo(
     () => ({
+      onProgress,
+      progressHandlers,
       playerId,
       setPlayerId,
       setSeekHandler,
@@ -108,6 +128,8 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setSkipHandler,
       setIsControlVisibilityLocked,
       isControlVisibilityLocked,
+      progressHandlers,
+      onProgress,
     ]
   );
 

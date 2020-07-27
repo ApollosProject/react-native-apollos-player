@@ -20,7 +20,7 @@ const Container = styled(
 const RNVideoPresentation = () => {
   const { nowPlaying, isPlaying, isFullscreen } = usePlayer();
 
-  const { setSkipHandler, setSeekHandler } = React.useContext(
+  const { setSkipHandler, setSeekHandler, progressHandlers } = React.useContext(
     InternalPlayerContext
   );
 
@@ -29,6 +29,9 @@ const RNVideoPresentation = () => {
     playableDuration: 0,
     seekableDuration: 0,
   });
+
+  console.log({ progressHandlers });
+
   const handleProgress = React.useMemo(
     () => (playhead: {
       currentTime: number;
@@ -36,8 +39,9 @@ const RNVideoPresentation = () => {
       seekableDuration: number;
     }) => {
       playheadRef.current = playhead;
+      progressHandlers.forEach((handler) => handler(playhead));
     },
-    [playheadRef]
+    [playheadRef, progressHandlers]
   );
 
   const videoRef = React.useRef<Video>(null);

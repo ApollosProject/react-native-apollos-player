@@ -5,6 +5,7 @@ import type {
   IPresentationComponents,
   INowPlaying,
   IInternalPlayer,
+  IProgressProp,
 } from './types';
 import FullscreenPresentation from './presentations/FullscreenPresentation';
 import MiniPresentation from './presentations/MiniPresentation';
@@ -37,6 +38,8 @@ export const InternalPlayerContext = React.createContext<IInternalPlayer>({
   setIsControlVisibilityLocked: () => null,
   isControlVisibilityLocked: true,
   playerId: '',
+  onProgress: (_: (props: IProgressProp) => void) => () => {},
+  progressHandlers: [],
 });
 
 export const MiniPresentationLayoutContext = React.createContext<

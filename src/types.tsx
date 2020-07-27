@@ -37,6 +37,12 @@ export interface INowPlaying {
   reset: (props: any) => void;
 }
 
+export interface IProgressProp {
+  currentTime: number;
+  playableDuration: number;
+  seekableDuration: number;
+}
+
 export interface IInternalPlayer {
   playerId: string;
   setPlayerId: React.Dispatch<React.SetStateAction<string>>;
@@ -48,6 +54,8 @@ export interface IInternalPlayer {
   >;
   setIsControlVisibilityLocked: React.Dispatch<React.SetStateAction<boolean>>;
   isControlVisibilityLocked: boolean;
+  onProgress: (handlerToAdd: (props: IProgressProp) => void) => () => void;
+  progressHandlers: Array<(props: IProgressProp) => void>;
 }
 
 export interface IPresentationComponents {
