@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, View, useWindowDimensions } from 'react-native';
 import Color from 'color';
 import {
   H4,
@@ -26,9 +26,7 @@ const DownButton = withTheme(
     style: {
       padding: theme?.sizing?.baseUnit / 1.25,
       backgroundColor: Color(theme?.colors?.darkTertiary).fade(0.5),
-      borderRadius: theme?.sizing?.baseUnit / 2,
-      borderTopLeftRadius: 0,
-      borderTopRightRadius: 0,
+      borderRadius: 0,
     },
     size: theme?.sizing?.baseUnit,
     name: 'fullscreen',
@@ -42,9 +40,7 @@ const CloseButton = withTheme(
     style: {
       padding: theme?.sizing?.baseUnit / 1.25,
       backgroundColor: Color(theme?.colors?.darkTertiary).fade(0.75),
-      borderRadius: theme?.sizing?.baseUnit / 2,
-      borderBottomRightRadius: 0,
-      borderBottomLeftRadius: 0,
+      borderRadius: 0,
     },
     size: theme?.sizing?.baseUnit,
     name: 'close',
@@ -52,14 +48,19 @@ const CloseButton = withTheme(
   'ui-media.MediaPlayer.FullscreenControls.Header.DownButton'
 )(ButtonIcon);
 
-const DownButtonContainer = styled(({ theme }: any) => ({
+const DownButtonContainer = styled(({ theme, isLandscape }: any) => ({
   position: 'absolute',
   top: theme?.sizing?.baseUnit,
   right: theme?.sizing?.baseUnit,
+  borderRadius: theme?.sizing?.baseUnit / 2,
+  overflow: 'hidden',
+  flexDirection: isLandscape ? 'row-reverse' : 'column',
 }))(View);
 
 const Header: React.FunctionComponent = () => {
   const { nowPlaying, setIsFullscreen, reset } = usePlayer();
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   return (
     <>
@@ -76,7 +77,7 @@ const Header: React.FunctionComponent = () => {
         </PaddedView>
       </SafeAreaView>
 
-      <DownButtonContainer>
+      <DownButtonContainer isLandscape={isLandscape}>
         <CloseButton onPress={reset} />
         <DownButton onPress={() => setIsFullscreen(false)} />
       </DownButtonContainer>
