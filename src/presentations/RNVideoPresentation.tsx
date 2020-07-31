@@ -18,9 +18,9 @@ const Container = styled(
 )(View);
 
 const RNVideoPresentation = () => {
-  const { nowPlaying, isPlaying, isFullscreen } = usePlayer();
+  const { nowPlaying, isPlaying, isFullscreen, setIsPlaying } = usePlayer();
 
-  const { setSkipHandler, setSeekHandler, progressHandlers } = React.useContext(
+  const { setSkipHandler, setSeekHandler, handleProgress } = React.useContext(
     InternalPlayerContext
   );
 
@@ -30,16 +30,16 @@ const RNVideoPresentation = () => {
     seekableDuration: 0,
   });
 
-  const handleProgress = React.useMemo(
+  const handleProgressProp = React.useMemo(
     () => (playhead: {
       currentTime: number;
       playableDuration: number;
       seekableDuration: number;
     }) => {
       playheadRef.current = playhead;
-      progressHandlers.forEach((handler) => handler(playhead));
+      handleProgress(playhead);
     },
-    [playheadRef, progressHandlers]
+    [playheadRef, handleProgress]
   );
 
   const videoRef = React.useRef<Video>(null);
@@ -79,13 +79,13 @@ const RNVideoPresentation = () => {
           allowsExternalPlayback
           playInBackground
           playWhenInactive
-          onProgress={handleProgress}
-          // onAudioBecomingNoisy={this.handlePause}
-          // onEnd={this.handleOnEnd}
-          resizeMode={'contain'}
-          // style={StyleSheet.absoluteFill}
-          // volume={mediaPlayer.muted ? 0 : 1}
+          onProgress={handleProgressProp}
+          onAudioBecomingNoisy={() => setIsPlaying(false)}
+          onEnd={() => {
+            setIsPlaying(false);
+          }}
           repeat
+          resizeMode={'contain'}
           style={StyleSheet.absoluteFill}
         />
       ) : null}

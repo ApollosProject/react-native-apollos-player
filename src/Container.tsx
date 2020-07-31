@@ -110,10 +110,21 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     [setProgressHandlers]
   );
 
+  const handleProgress = React.useMemo(
+    () => (playhead: {
+      currentTime: number;
+      playableDuration: number;
+      seekableDuration: number;
+    }) => {
+      progressHandlers.forEach((handler) => handler(playhead));
+    },
+    [progressHandlers]
+  );
+
   const internalPlayerState = React.useMemo(
     () => ({
       onProgress,
-      progressHandlers,
+      handleProgress,
       playerId,
       setPlayerId,
       setSeekHandler,
@@ -128,7 +139,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setSkipHandler,
       setIsControlVisibilityLocked,
       isControlVisibilityLocked,
-      progressHandlers,
+      handleProgress,
       onProgress,
     ]
   );

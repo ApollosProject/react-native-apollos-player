@@ -39,7 +39,7 @@ export const InternalPlayerContext = React.createContext<IInternalPlayer>({
   isControlVisibilityLocked: true,
   playerId: '',
   onProgress: (_: (props: IProgressProp) => void) => () => {},
-  progressHandlers: [],
+  handleProgress: () => {},
 });
 
 export const MiniPresentationLayoutContext = React.createContext<
