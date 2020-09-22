@@ -18,7 +18,7 @@ const Container = styled(
 )(View);
 
 const RNVideoPresentation = () => {
-  const { nowPlaying, isPlaying, isFullscreen, setIsPlaying } = usePlayer();
+  const { nowPlaying, isFullscreen, setIsPlaying } = usePlayer();
 
   const { setSkipHandler, setSeekHandler, handleProgress } = React.useContext(
     InternalPlayerContext
@@ -74,17 +74,18 @@ const RNVideoPresentation = () => {
         <Video
           ref={videoRef}
           source={nowPlaying?.source}
-          paused={!isPlaying}
+          // paused={!isPlaying}
           ignoreSilentSwitch={'ignore'}
-          allowsExternalPlayback
+          // allowsExternalPlayback
           playInBackground
-          playWhenInactive
+          // playWhenInactive
           onProgress={handleProgressProp}
           onAudioBecomingNoisy={() => setIsPlaying(false)}
+          // pictureInPicture
           onEnd={() => {
             setIsPlaying(false);
           }}
-          repeat
+          // repeat
           resizeMode={'contain'}
           style={StyleSheet.absoluteFill}
         />

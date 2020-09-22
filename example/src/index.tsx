@@ -8,6 +8,7 @@ import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { ThemeProvider } from '@apollosproject/ui-kit/src/theme';
 import { ThemeMixin } from '@apollosproject/ui-kit';
+import VideoTests from './VideoTests';
 import Reparenting from './Reparenting';
 
 enableScreens();
@@ -68,6 +69,11 @@ const App = () => {
                 name="Modal"
                 component={Modal}
                 options={{ stackPresentation: 'modal' }}
+              />
+              <Stack.Screen
+                name="VideoTests"
+                component={VideoTests}
+                options={{ stackPresentation: 'push' }}
               />
               <Stack.Screen
                 name="FullScreenModal"
