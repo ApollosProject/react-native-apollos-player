@@ -77,17 +77,6 @@ const RNVideoPresentation = () => {
 
   setSeekHandler(() => seek);
 
-  React.useEffect(() => {
-    if (
-      !isFullscreen &&
-      Platform.OS === 'ios' &&
-      parseInt(String(Platform.Version), 10) >= 14
-    ) {
-      // assume the device supports PiP on iOS 14
-      setIsInPiP(true);
-    }
-  }, [isFullscreen, setIsInPiP]);
-
   return (
     <Container isFullscreen={isFullscreen}>
       {nowPlaying?.source ? (
