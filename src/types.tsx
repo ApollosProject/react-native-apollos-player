@@ -56,6 +56,8 @@ export interface IInternalPlayer {
   isControlVisibilityLocked: boolean;
   onProgress: (handlerToAdd: (props: IProgressProp) => void) => () => void;
   handleProgress: (props: IProgressProp) => void;
+  isInPiP: boolean;
+  setIsInPiP: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IPresentationComponents {

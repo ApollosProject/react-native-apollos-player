@@ -9,6 +9,7 @@ const VideoPresentationContainer = () => {
   const { playerId } = React.useContext(InternalPlayerContext);
 
   if (!VideoPresentationComponent) return null;
+
   return (
     <PortalOrigin destination={playerId} style={StyleSheet.absoluteFill}>
       <VideoPresentationComponent />

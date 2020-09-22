@@ -40,6 +40,8 @@ export const InternalPlayerContext = React.createContext<IInternalPlayer>({
   playerId: '',
   onProgress: (_: (props: IProgressProp) => void) => () => {},
   handleProgress: () => {},
+  isInPiP: false,
+  setIsInPiP: () => null,
 });
 
 export const MiniPresentationLayoutContext = React.createContext<

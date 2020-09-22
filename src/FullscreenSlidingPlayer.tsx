@@ -13,6 +13,7 @@ import {
   PresentationContext,
   MiniPresentationLayoutContext,
   NowPlayingContext,
+  InternalPlayerContext,
 } from './context';
 
 import VideoPresentationContainer from './VideoPresentationContainer';
@@ -36,6 +37,8 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     FullScreenPresentationComponent,
   } = React.useContext(PresentationContext);
 
+  const { isInPiP } = React.useContext(InternalPlayerContext);
+
   // Tracks the opening/closing animation. Since we use a <Modal> on iOS,
   // ths is effectively only really used fully on Android
   // (although the animation is still triggered on iOS to KISS).
@@ -56,10 +59,12 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
   // This is set as a Ref since it is mutated (onLayout call below)
   const fullscreenHeightRef = React.useRef(Dimensions.get('window').height);
 
+  // ☠️ This is causing a crash on iOS 14
+  // Disabling this destroys the "drag to close" animation
   // Used to render position of the fullscreen slider
-  const fullScreenWithOffset = React.useRef(
-    Animated.add(fullscreenAnimation, fullscreenDragOffset)
-  ).current;
+  // const fullScreenWithOffset = React.useRef(
+  //   Animated.add(fullscreenAnimation, fullscreenDragOffset)
+  // ).current;
 
   // Used to render position of the mini player
   const fullscreenWithNoMediaAnimation = React.useRef(
@@ -78,7 +83,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
   }).start();
 
   Animated.spring(noMediaAnimation, {
-    toValue: nowPlaying?.source ? 0 : 1,
+    toValue: nowPlaying?.source && !isInPiP ? 0 : 1,
     useNativeDriver: true,
   }).start();
 
@@ -87,22 +92,24 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
       StyleSheet.absoluteFill,
       {
         zIndex: 9999, // 🎉
-        opacity: fullScreenWithOffset.interpolate({
-          inputRange: [0, 0.5],
-          outputRange: [0, 1],
-          extrapolate: 'clamp',
-        }),
-        transform: [
-          {
-            translateY: fullScreenWithOffset.interpolate({
-              inputRange: [0, 1],
-              outputRange: [fullscreenHeightRef.current, 0],
-            }),
-          },
-        ],
+        // ☠️ This is causing a crash on iOS 14
+        // Disabling this destroys the "drag to close" animation
+        // opacity: fullScreenWithOffset.interpolate({
+        //   inputRange: [0, 0.5],
+        //   outputRange: [0, 1],
+        //   extrapolate: 'clamp',
+        // }),
+        // transform: [
+        //   {
+        //     translateY: fullscreenAnimation.interpolate({
+        //       inputRange: [0, 1],
+        //       outputRange: [fullscreenHeightRef.current, 0],
+        //     }),
+        //   },
+        // ],
       },
     ],
-    [fullScreenWithOffset]
+    []
   );
 
   const miniPresentationStyles = React.useMemo(
@@ -234,7 +241,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
 
   return (
     <React.Fragment>
-      {/* Video View */}
+      {/* Root-Level Video View */}
       {isMasterPlayer ? (
         <Animated.View
           style={

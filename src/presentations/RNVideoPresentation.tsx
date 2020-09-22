@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, InteractionManager } from 'react-native';
 import Video from 'react-native-video';
 import { styled } from '@apollosproject/ui-kit';
 import usePlayer from '../usePlayer';
@@ -18,11 +18,20 @@ const Container = styled(
 )(View);
 
 const RNVideoPresentation = () => {
-  const { nowPlaying, isFullscreen, setIsPlaying } = usePlayer();
+  const {
+    nowPlaying,
+    setIsFullscreen,
+    isFullscreen,
+    isPlaying,
+    setIsPlaying,
+  } = usePlayer();
 
-  const { setSkipHandler, setSeekHandler, handleProgress } = React.useContext(
-    InternalPlayerContext
-  );
+  const {
+    setSkipHandler,
+    setSeekHandler,
+    handleProgress,
+    setIsInPiP,
+  } = React.useContext(InternalPlayerContext);
 
   const playheadRef = React.useRef({
     currentTime: 0,
@@ -68,24 +77,46 @@ const RNVideoPresentation = () => {
 
   setSeekHandler(() => seek);
 
+  React.useEffect(() => {
+    if (
+      !isFullscreen &&
+      Platform.OS === 'ios' &&
+      parseInt(String(Platform.Version), 10) >= 14
+    ) {
+      // assume the device supports PiP on iOS 14
+      setIsInPiP(true);
+    }
+  }, [isFullscreen, setIsInPiP]);
+
   return (
     <Container isFullscreen={isFullscreen}>
       {nowPlaying?.source ? (
         <Video
           ref={videoRef}
           source={nowPlaying?.source}
-          // paused={!isPlaying}
+          paused={!isPlaying}
           ignoreSilentSwitch={'ignore'}
           // allowsExternalPlayback
-          playInBackground
+          // playInBackground
           // playWhenInactive
           onProgress={handleProgressProp}
           onAudioBecomingNoisy={() => setIsPlaying(false)}
-          // pictureInPicture
+          pictureInPicture={!isFullscreen}
           onEnd={() => {
             setIsPlaying(false);
           }}
-          // repeat
+          onPictureInPictureStatusChanged={({ isActive }) =>
+            setIsInPiP(isActive)
+          }
+          onRestoreUserInterfaceForPictureInPictureStop={() => {
+            setIsFullscreen(true);
+            InteractionManager.runAfterInteractions(() => {
+              (videoRef.current as any).restoreUserInterfaceForPictureInPictureStopCompleted(
+                true
+              );
+            });
+          }}
+          repeat
           resizeMode={'contain'}
           style={StyleSheet.absoluteFill}
         />

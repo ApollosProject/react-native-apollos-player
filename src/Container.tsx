@@ -50,6 +50,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
   const [nowPlaying, setNowPlaying] = React.useState<IPlayerMedia | null>(null);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
   const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
+  const [isInPiP, setIsInPiP] = React.useState<boolean>(false);
   const [playerId, setPlayerId] = React.useState<string>('');
   const [seek, setSeekHandler] = React.useState<(seekTo: number) => void>(
     () => {}
@@ -74,10 +75,19 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     [setNowPlaying, setIsPlaying, setIsFullscreen]
   );
 
+  const setNowPlayingAndFullscreen = React.useMemo(
+    () => (nowPlayingMedia: IPlayerMedia | null) => {
+      setNowPlaying(nowPlayingMedia);
+      setIsFullscreen(true);
+      setIsPlaying(true);
+    },
+    [setNowPlaying, setIsFullscreen, setIsPlaying]
+  );
+
   const nowPlayingState = React.useMemo(
     () => ({
       nowPlaying,
-      setNowPlaying,
+      setNowPlaying: setNowPlayingAndFullscreen,
       isPlaying,
       setIsPlaying,
       isFullscreen,
@@ -88,7 +98,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     }),
     [
       nowPlaying,
-      setNowPlaying,
+      setNowPlayingAndFullscreen,
       isPlaying,
       setIsPlaying,
       isFullscreen,
@@ -131,6 +141,8 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setSkipHandler,
       setIsControlVisibilityLocked,
       isControlVisibilityLocked,
+      isInPiP,
+      setIsInPiP,
     }),
     [
       playerId,
@@ -141,6 +153,8 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       isControlVisibilityLocked,
       handleProgress,
       onProgress,
+      isInPiP,
+      setIsInPiP,
     ]
   );
 
