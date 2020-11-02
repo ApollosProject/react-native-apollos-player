@@ -30,17 +30,12 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
   });
 
   // TODO: calculate these some other way
-  const collapsedVideoHeight = layout.width * (9 / 16);
-  const expandedVideoHeight = layout.width;
-
-  console.log({ layout, collapsedVideoHeight, expandedVideoHeight });
+  const videoHeight = Math.max(1, layout.width * (9 / 16));
 
   // Tracks the opening/closing animation. Since we use a <Modal> on iOS,
   // ths is effectively only really used fully on Android
   // (although the animation is still triggered on iOS to KISS).
   const fullscreenAnimation = React.useRef(new Animated.Value(0)).current;
-
-  const scrollOffsetY = React.useRef(new Animated.Value(0)).current;
 
   const { isFullscreen } = React.useContext(NowPlayingContext);
 
@@ -57,32 +52,17 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     []
   );
 
-  const startingInputRange =
-    Platform.OS === 'ios' ? -(expandedVideoHeight - collapsedVideoHeight) : 0;
-
   const miniPresentationStyles = React.useMemo(
     () => ({
       width: '100%',
-      height: scrollOffsetY.interpolate({
-        inputRange: [
-          startingInputRange,
-          startingInputRange + expandedVideoHeight - collapsedVideoHeight,
-        ],
-        outputRange: [expandedVideoHeight, collapsedVideoHeight],
-        extrapolate: 'clamp',
-      }),
+      height: videoHeight,
     }),
-    [
-      startingInputRange,
-      scrollOffsetY,
-      expandedVideoHeight,
-      collapsedVideoHeight,
-    ]
+    [videoHeight]
   );
 
   const scrollViewStyles = React.useMemo(
-    () => [StyleSheet.absoluteFill, { top: collapsedVideoHeight }],
-    [collapsedVideoHeight]
+    () => [StyleSheet.absoluteFill, { top: videoHeight }],
+    [videoHeight]
   );
 
   let FullscreenWrapper = React.useMemo(() => {
@@ -96,11 +76,6 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
         hardwareAccelerated
         transparent
         visible={isFullscreen}
-        supportedOrientations={[
-          'landscape',
-          'landscape-left',
-          'landscape-right',
-        ]}
         {...props}
       />
     );
@@ -115,22 +90,14 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
       <ScrollView
         scrollEventThrottle={16}
         style={scrollViewStyles}
-        onScroll={Animated.event([
-          {
-            nativeEvent: { contentOffset: { y: scrollOffsetY } },
-          },
-        ])}
-        contentInset={{ top: expandedVideoHeight - collapsedVideoHeight }}
         contentOffset={{
           x: 0,
-          y: -(expandedVideoHeight - collapsedVideoHeight),
+          y: -videoHeight,
         }}
       >
         {/* Only iOS supports contentInset and offset above */}
         {Platform.OS !== 'ios' ? (
-          <View
-            style={{ height: expandedVideoHeight - collapsedVideoHeight }}
-          />
+          <View style={{ height: videoHeight }} />
         ) : null}
         {children}
       </ScrollView>
