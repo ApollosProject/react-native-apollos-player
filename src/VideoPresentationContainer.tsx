@@ -5,14 +5,14 @@ import { PresentationContext, InternalPlayerContext } from './context';
 import { PortalOrigin } from './portals';
 
 const VideoPresentationContainer = () => {
-  const { VideoPresentationComponent } = React.useContext(PresentationContext);
+  const { VideoComponent } = React.useContext(PresentationContext);
   const { playerId } = React.useContext(InternalPlayerContext);
 
-  if (!VideoPresentationComponent) return null;
+  if (!VideoComponent) return null;
 
   return (
     <PortalOrigin destination={playerId} style={StyleSheet.absoluteFill}>
-      <VideoPresentationComponent />
+      <VideoComponent />
     </PortalOrigin>
   );
 };

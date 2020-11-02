@@ -19,7 +19,7 @@ interface FullScreenSlidingPlayerProps {}
 const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerProps> = ({
   children,
 }) => {
-  const { MiniPresentationComponent } = React.useContext(PresentationContext);
+  const { PresentationComponent } = React.useContext(PresentationContext);
 
   const [layout, setLayout] = React.useState({
     x: 0,
@@ -150,7 +150,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
       {/* Primary Video View */}
       <Animated.View style={presentationStyles}>
         <VideoPresentationContainer />
-        {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
+        {PresentationComponent ? <PresentationComponent /> : null}
       </Animated.View>
 
       {/* iOS-only modal-basdd fullScreen controls */}
@@ -159,7 +159,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
           style={[presentationStyles, fullscreenPresentationStyles]}
         >
           {isFullscreen ? <VideoOutlet /> : null}
-          {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
+          {PresentationComponent ? <PresentationComponent /> : null}
         </Animated.View>
       </FullscreenWrapper>
     </View>

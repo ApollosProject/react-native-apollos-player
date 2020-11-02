@@ -62,16 +62,7 @@ export interface IInternalPlayer {
 
 export interface IPresentationComponents {
   /** Component that renders the actual video. Default: react-native-video */
-  VideoPresentationComponent?: FunctionComponent;
-  /** Component that is displayed above the video when in mini view */
-  MiniPresentationComponent?: FunctionComponent<MiniPresentationProps>;
-  /** Component that is displayed above the video when fullscreen */
-  FullScreenPresentationComponent?: FunctionComponent;
-}
-
-export interface IMiniPresentationLayout {
-  width: number;
-  height: number;
-  xOffset: number;
-  yOffset: number;
+  VideoComponent?: FunctionComponent;
+  /** Component that is displayed above the video */
+  PresentationComponent?: FunctionComponent<MiniPresentationProps>;
 }

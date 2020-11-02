@@ -84,15 +84,4 @@ const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
   );
 };
 
-const screen = Dimensions.get('screen');
-
-export const defaultMiniPlayerSize = {
-  width: Math.max(Math.min(screen.width * 0.5, 240), 180),
-  height: 0,
-  xOffset: 16,
-  yOffset: 24,
-};
-
-defaultMiniPlayerSize.height = defaultMiniPlayerSize.width * (9 / 16);
-
 export default MiniPresentation;
