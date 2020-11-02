@@ -7,6 +7,3 @@ export { Container as ApollosPlayerContainer };
 
 import usePlayer from './usePlayer';
 export { usePlayer };
-
-import VideoPreviewMiniIOS from './VideoPreviewMiniIOS';
-export { VideoPreviewMiniIOS };

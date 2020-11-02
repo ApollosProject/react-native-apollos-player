@@ -2,15 +2,11 @@ import * as React from 'react';
 import { Text, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import PlayerExamples from './Examples';
-
 const TestOne = () => {
   const { navigate, goBack } = useNavigation();
 
   return (
     <SafeAreaView>
-      <PlayerExamples />
-      <Text>---------</Text>
       <Text onPress={() => navigate('Reparenting')}>Reparenting test</Text>
       <Text onPress={() => navigate('Push')}>Push view</Text>
       <Text onPress={() => navigate('Modal')}>Modal view</Text>

@@ -14,12 +14,11 @@ import FadeoutOverlay from '../FadeoutOverlay';
 
 export interface MiniPresentationProps {}
 
-const MiniFadeoutOverlay = styled(({ theme }: any) => ({
-  borderRadius: theme?.sizing?.baseUnit,
+const MiniFadeoutOverlay = styled({
   alignItems: 'center',
   justifyContent: 'center',
   flexDirection: 'row',
-}))(FadeoutOverlay);
+})(FadeoutOverlay);
 
 const StyledButtonIcon = withTheme(({ theme }: any) => ({
   fill: theme?.colors?.white,

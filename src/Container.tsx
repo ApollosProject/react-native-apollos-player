@@ -186,8 +186,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       <PresentationContext.Provider value={presentationState}>
         <MiniPresentationLayoutContext.Provider value={miniLayoutState}>
           <InternalPlayerContext.Provider value={internalPlayerState}>
-            <FullscreenSlidingPlayer isMasterPlayer />
-            {children}
+            <FullscreenSlidingPlayer>{children}</FullscreenSlidingPlayer>
           </InternalPlayerContext.Provider>
         </MiniPresentationLayoutContext.Provider>
       </PresentationContext.Provider>
