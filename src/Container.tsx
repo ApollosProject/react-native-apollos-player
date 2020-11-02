@@ -75,19 +75,10 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     [setNowPlaying, setIsPlaying, setIsFullscreen]
   );
 
-  const setNowPlayingAndFullscreen = React.useMemo(
-    () => (nowPlayingMedia: IPlayerMedia | null) => {
-      setNowPlaying(nowPlayingMedia);
-      setIsFullscreen(true);
-      setIsPlaying(true);
-    },
-    [setNowPlaying, setIsFullscreen, setIsPlaying]
-  );
-
   const nowPlayingState = React.useMemo(
     () => ({
       nowPlaying,
-      setNowPlaying: setNowPlayingAndFullscreen,
+      setNowPlaying,
       isPlaying,
       setIsPlaying,
       isFullscreen,
@@ -98,7 +89,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     }),
     [
       nowPlaying,
-      setNowPlayingAndFullscreen,
+      setNowPlaying,
       isPlaying,
       setIsPlaying,
       isFullscreen,

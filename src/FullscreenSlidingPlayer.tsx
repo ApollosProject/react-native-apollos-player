@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Platform,
   Modal,
-  ScrollView,
   Dimensions,
   View,
 } from 'react-native';
@@ -29,40 +28,78 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     height: Dimensions.get('window').height,
   });
 
-  // TODO: calculate these some other way
-  const videoHeight = Math.max(1, layout.width * (9 / 16));
+  const window = Dimensions.get('screen');
 
-  // Tracks the opening/closing animation. Since we use a <Modal> on iOS,
-  // ths is effectively only really used fully on Android
-  // (although the animation is still triggered on iOS to KISS).
+  // TODO: calculate this some other way?
+  const videoHeight = Math.min(
+    layout.height * 0.4,
+    Math.max(1, layout.width * (9 / 16))
+  );
+
   const fullscreenAnimation = React.useRef(new Animated.Value(0)).current;
 
   const { isFullscreen } = React.useContext(NowPlayingContext);
 
   Animated.spring(fullscreenAnimation, {
     toValue: isFullscreen ? 1 : 0,
-    useNativeDriver: true,
+    useNativeDriver: false, // todo
   }).start();
 
   const fullscreenPresentationStyles = React.useMemo(
-    () => ({
-      ...StyleSheet.absoluteFillObject,
-      zIndex: 99999,
-    }),
+    () => [
+      StyleSheet.absoluteFill,
+      {
+        zIndex: 99999,
+        // cancel out animation effect below
+        transform: [
+          {
+            translateY: 0,
+          },
+        ],
+      },
+    ],
     []
   );
 
-  const miniPresentationStyles = React.useMemo(
+  const presentationStyles = React.useMemo(
     () => ({
-      width: '100%',
-      height: videoHeight,
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      transform: [
+        {
+          translateY: fullscreenAnimation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, layout.height - window.height],
+          }),
+        },
+      ],
+      height: fullscreenAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [videoHeight, window.height],
+      }),
     }),
-    [videoHeight]
+    [videoHeight, fullscreenAnimation, layout.height, window.height]
   );
 
   const scrollViewStyles = React.useMemo(
-    () => [StyleSheet.absoluteFill, { top: videoHeight }],
-    [videoHeight]
+    () => ({
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      top: 0,
+      transform: [
+        {
+          translateY: fullscreenAnimation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, window.height],
+          }),
+        },
+      ],
+    }),
+    [fullscreenAnimation, window.height]
   );
 
   let FullscreenWrapper = React.useMemo(() => {
@@ -71,11 +108,18 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
     if (Platform.OS !== 'ios') return () => null;
     const Wrapper: React.FunctionComponent = (props) => (
       <Modal
-        animationType="none"
+        animationType="fade"
         presentationStyle="overFullScreen"
         hardwareAccelerated
         transparent
         visible={isFullscreen}
+        supportedOrientations={[
+          'portrait',
+          'portrait-upside-down',
+          'landscape',
+          'landscape-left',
+          'landscape-right',
+        ]}
         {...props}
       />
     );
@@ -87,9 +131,10 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
       style={StyleSheet.absoluteFill}
       onLayout={({ nativeEvent: { layout: _layout } }) => setLayout(_layout)}
     >
-      <ScrollView
+      <Animated.ScrollView
         scrollEventThrottle={16}
         style={scrollViewStyles}
+        contentInset={{ top: videoHeight }}
         contentOffset={{
           x: 0,
           y: -videoHeight,
@@ -100,21 +145,19 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
           <View style={{ height: videoHeight }} />
         ) : null}
         {children}
-      </ScrollView>
+      </Animated.ScrollView>
 
-      {/* Root-Level Video View */}
-      <Animated.View
-        style={
-          isFullscreen ? fullscreenPresentationStyles : miniPresentationStyles
-        }
-      >
+      {/* Primary Video View */}
+      <Animated.View style={presentationStyles}>
         <VideoPresentationContainer />
         {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
       </Animated.View>
 
-      {/* FullScreen controls */}
+      {/* iOS-only modal-basdd fullScreen controls */}
       <FullscreenWrapper>
-        <Animated.View style={fullscreenPresentationStyles}>
+        <Animated.View
+          style={[presentationStyles, fullscreenPresentationStyles]}
+        >
           {isFullscreen ? <VideoOutlet /> : null}
           {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
         </Animated.View>

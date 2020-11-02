@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, InteractionManager } from 'react-native';
+import { StyleSheet, View, InteractionManager, Platform } from 'react-native';
 import Video from 'react-native-video';
 import { styled } from '@apollosproject/ui-kit';
 import usePlayer from '../usePlayer';
@@ -74,6 +74,17 @@ const RNVideoPresentation = () => {
   );
 
   setSeekHandler(() => seek);
+
+  // While Android doesn't have a fullscreen player, calling present
+  // and dismiss does still hide the status bar and Android controls
+  React.useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    if (isFullscreen) {
+      videoRef.current?.presentFullscreenPlayer();
+    } else {
+      videoRef.current?.dismissFullscreenPlayer();
+    }
+  }, [isFullscreen]);
 
   return (
     <Container>
