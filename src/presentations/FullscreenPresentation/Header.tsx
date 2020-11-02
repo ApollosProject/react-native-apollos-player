@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, View, useWindowDimensions } from 'react-native';
-import Color from 'color';
+import { SafeAreaView } from 'react-native';
 import {
   H4,
   BodySmall,
@@ -20,68 +19,43 @@ const Image = styled(({ theme }: any) => ({
   aspectRatio: 1,
 }))(ConnectedImage);
 
-const DownButton = withTheme(
+const MoreButton = withTheme(
   ({ theme }: any) => ({
     fill: theme?.colors?.text?.secondary,
     style: {
-      padding: theme?.sizing?.baseUnit / 1.25,
-      backgroundColor: Color(theme?.colors?.darkTertiary).fade(0.5),
+      paddingVertical: 0,
+      paddingHorizontal: theme?.sizing?.baseUnit / 1.25,
       borderRadius: 0,
     },
-    size: theme?.sizing?.baseUnit,
-    name: 'fullscreen',
+    size: theme?.sizing?.baseUnit * 1.5,
+    name: 'settings',
   }),
   'ui-media.MediaPlayer.FullscreenControls.Header.DownButton'
 )(ButtonIcon);
 
-const CloseButton = withTheme(
-  ({ theme }: any) => ({
-    fill: theme?.colors?.text?.secondary,
-    style: {
-      padding: theme?.sizing?.baseUnit / 1.25,
-      backgroundColor: Color(theme?.colors?.darkTertiary).fade(0.75),
-      borderRadius: 0,
-    },
-    size: theme?.sizing?.baseUnit,
-    name: 'close',
-  }),
-  'ui-media.MediaPlayer.FullscreenControls.Header.DownButton'
-)(ButtonIcon);
-
-const DownButtonContainer = styled(({ theme, isLandscape }: any) => ({
-  position: 'absolute',
-  top: theme?.sizing?.baseUnit,
-  right: theme?.sizing?.baseUnit,
-  borderRadius: theme?.sizing?.baseUnit / 2,
-  overflow: 'hidden',
-  flexDirection: isLandscape ? 'row-reverse' : 'column',
-}))(View);
+const Container = styled({
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+})(SafeAreaView);
 
 const Header: React.FunctionComponent = () => {
-  const { nowPlaying, setIsFullscreen, reset } = usePlayer();
-  const { width, height } = useWindowDimensions();
-  const isLandscape = width > height;
+  const { nowPlaying } = usePlayer();
 
   return (
-    <>
-      <SafeAreaView>
-        <PaddedView>
-          {nowPlaying?.presentationProps?.coverImage ? (
-            <Image source={nowPlaying.presentationProps.coverImage} />
-          ) : null}
-          {nowPlaying?.presentationProps?.badge
-            ? nowPlaying?.presentationProps?.badge
-            : null}
-          <H4>{nowPlaying?.presentationProps?.title}</H4>
-          <BodySmall>{nowPlaying?.presentationProps?.description}</BodySmall>
-        </PaddedView>
-      </SafeAreaView>
+    <Container>
+      <PaddedView vertical={false}>
+        {nowPlaying?.presentationProps?.coverImage ? (
+          <Image source={nowPlaying.presentationProps.coverImage} />
+        ) : null}
+        {nowPlaying?.presentationProps?.badge
+          ? nowPlaying?.presentationProps?.badge
+          : null}
+        <H4>{nowPlaying?.presentationProps?.title}</H4>
+        <BodySmall>{nowPlaying?.presentationProps?.description}</BodySmall>
+      </PaddedView>
 
-      <DownButtonContainer isLandscape={isLandscape}>
-        <CloseButton onPress={reset} />
-        <DownButton onPress={() => setIsFullscreen(false)} />
-      </DownButtonContainer>
-    </>
+      <MoreButton />
+    </Container>
   );
 };
 

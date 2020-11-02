@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Animated,
   StyleSheet,
+  StatusBar,
   Platform,
   Modal,
   Dimensions,
@@ -153,7 +154,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
         {PresentationComponent ? <PresentationComponent /> : null}
       </Animated.View>
 
-      {/* iOS-only modal-basdd fullScreen controls */}
+      {/* iOS-only modal-based fullScreen controls */}
       <FullscreenWrapper>
         <Animated.View
           style={[presentationStyles, fullscreenPresentationStyles]}
@@ -162,6 +163,8 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
           {PresentationComponent ? <PresentationComponent /> : null}
         </Animated.View>
       </FullscreenWrapper>
+
+      <StatusBar hidden={isFullscreen} showHideTransition="slide" />
     </View>
   );
 };

@@ -11,33 +11,28 @@ import {
   InternalPlayerContext,
 } from './context';
 
-import MiniPresentation from './presentations/MiniPresentation';
+import FullscreenPresentation from './presentations/FullscreenPresentation';
 import RNVideoPresentation from './presentations/RNVideoPresentation';
 
-interface ContainerProps extends IPresentationComponents {
-  /**
-   * Controls the layout and size of the mini player.
-   */
-  miniPresentationLayout?: {
-    width?: number;
-    height?: number;
-    /** additional offset from horizontal edge of screen */
-    xOffset?: number;
-    /**
-     * additional offset from vertical edge of screen.
-     * Ex: Increase when rendering above a tab-bar
-     */
-    yOffset?: number;
-  };
+interface ContainerProps extends IPresentationComponents, IPlayerMedia {
+  autoplay?: Boolean;
 }
 
 const Container: React.FunctionComponent<ContainerProps> = ({
   VideoComponent = RNVideoPresentation,
-  PresentationComponent = MiniPresentation,
+  PresentationComponent = FullscreenPresentation,
   children,
+  source,
+  coverImage,
+  presentationProps,
+  autoplay = false,
 }) => {
-  const [nowPlaying, setNowPlaying] = React.useState<IPlayerMedia | null>(null);
-  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
+  const [nowPlaying, setNowPlaying] = React.useState<IPlayerMedia | null>({
+    source,
+    coverImage,
+    presentationProps,
+  });
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(!!autoplay);
   const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
   const [isInPiP, setIsInPiP] = React.useState<boolean>(false);
   const [playerId, setPlayerId] = React.useState<string>('');

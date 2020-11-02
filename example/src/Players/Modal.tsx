@@ -9,7 +9,14 @@ const TestOne = () => {
   const { push, goBack } = useNavigation<any>();
 
   return (
-    <ApollosPlayerContainer>
+    <ApollosPlayerContainer
+      source={require('./broadchurch.mp4')}
+      presentationProps={{
+        title: 'Video Title',
+        description: 'Video Description',
+        coverImage: { uri: 'https://picsum.photos/100/100' },
+      }}
+    >
       <PlayerExamples />
       <Text>---------</Text>
       <Text onPress={() => push('Reparenting')}>Reparenting test</Text>
