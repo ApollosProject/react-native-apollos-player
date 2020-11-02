@@ -52,15 +52,20 @@ const IconMd = withTheme(
 )(ButtonIcon);
 
 const FullscreenPresentation = () => {
-  const { isFullscreen, isPlaying, setIsPlaying, skip } = usePlayer();
+  const {
+    isFullscreen,
+    setIsFullscreen,
+    isPlaying,
+    setIsPlaying,
+    skip,
+  } = usePlayer();
 
   return (
     <ThemeMixin mixin={{ type: 'dark' }}>
       <StatusBar hidden={isFullscreen} />
       <FadeoutOverlay>
-        <Header />
+        {isFullscreen ? <Header /> : null}
         <FooterWrapper>
-          <Seeker />
           <FooterControls>
             <IconSm name="chromecast" />
             <IconMd name="skip-back-thirty" onPress={() => skip(-30)} />
@@ -69,8 +74,12 @@ const FullscreenPresentation = () => {
               onPress={() => setIsPlaying(!isPlaying)}
             />
             <IconMd name="skip-forward-thirty" onPress={() => skip(30)} />
-            <IconSm name="text" />
+            <IconSm
+              name="fullscreen"
+              onPress={() => setIsFullscreen(!isFullscreen)}
+            />
           </FooterControls>
+          <Seeker />
         </FooterWrapper>
       </FadeoutOverlay>
     </ThemeMixin>

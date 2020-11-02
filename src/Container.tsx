@@ -8,47 +8,31 @@ import FullscreenSlidingPlayer from './FullscreenSlidingPlayer';
 import {
   NowPlayingContext,
   PresentationContext,
-  MiniPresentationLayoutContext,
   InternalPlayerContext,
 } from './context';
 
 import FullscreenPresentation from './presentations/FullscreenPresentation';
-import MiniPresentation, {
-  defaultMiniPlayerSize,
-} from './presentations/MiniPresentation';
 import RNVideoPresentation from './presentations/RNVideoPresentation';
 
-interface ContainerProps extends IPresentationComponents {
-  /**
-   * Controls the layout and size of the mini player.
-   */
-  miniPresentationLayout?: {
-    width?: number;
-    height?: number;
-    /** additional offset from horizontal edge of screen */
-    xOffset?: number;
-    /**
-     * additional offset from vertical edge of screen.
-     * Ex: Increase when rendering above a tab-bar
-     */
-    yOffset?: number;
-  };
+interface ContainerProps extends IPresentationComponents, IPlayerMedia {
+  autoplay?: Boolean;
 }
 
 const Container: React.FunctionComponent<ContainerProps> = ({
-  VideoPresentationComponent = RNVideoPresentation,
-  MiniPresentationComponent = MiniPresentation,
-  FullScreenPresentationComponent = FullscreenPresentation,
-  miniPresentationLayout: {
-    width = defaultMiniPlayerSize.width,
-    height = defaultMiniPlayerSize.height,
-    xOffset = defaultMiniPlayerSize.xOffset,
-    yOffset = defaultMiniPlayerSize.yOffset,
-  } = {},
+  VideoComponent = RNVideoPresentation,
+  PresentationComponent = FullscreenPresentation,
   children,
+  source,
+  coverImage,
+  presentationProps,
+  autoplay = false,
 }) => {
-  const [nowPlaying, setNowPlaying] = React.useState<IPlayerMedia | null>(null);
-  const [isPlaying, setIsPlaying] = React.useState<boolean>(false);
+  const [nowPlaying, setNowPlaying] = React.useState<IPlayerMedia | null>({
+    source,
+    coverImage,
+    presentationProps,
+  });
+  const [isPlaying, setIsPlaying] = React.useState<boolean>(!!autoplay);
   const [isFullscreen, setIsFullscreen] = React.useState<boolean>(false);
   const [isInPiP, setIsInPiP] = React.useState<boolean>(false);
   const [playerId, setPlayerId] = React.useState<string>('');
@@ -75,19 +59,10 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     [setNowPlaying, setIsPlaying, setIsFullscreen]
   );
 
-  const setNowPlayingAndFullscreen = React.useMemo(
-    () => (nowPlayingMedia: IPlayerMedia | null) => {
-      setNowPlaying(nowPlayingMedia);
-      setIsFullscreen(true);
-      setIsPlaying(true);
-    },
-    [setNowPlaying, setIsFullscreen, setIsPlaying]
-  );
-
   const nowPlayingState = React.useMemo(
     () => ({
       nowPlaying,
-      setNowPlaying: setNowPlayingAndFullscreen,
+      setNowPlaying,
       isPlaying,
       setIsPlaying,
       isFullscreen,
@@ -98,7 +73,7 @@ const Container: React.FunctionComponent<ContainerProps> = ({
     }),
     [
       nowPlaying,
-      setNowPlayingAndFullscreen,
+      setNowPlaying,
       isPlaying,
       setIsPlaying,
       isFullscreen,
@@ -160,36 +135,18 @@ const Container: React.FunctionComponent<ContainerProps> = ({
 
   const presentationState = React.useMemo(
     () => ({
-      VideoPresentationComponent,
-      MiniPresentationComponent,
-      FullScreenPresentationComponent,
+      VideoComponent,
+      PresentationComponent,
     }),
-    [
-      VideoPresentationComponent,
-      MiniPresentationComponent,
-      FullScreenPresentationComponent,
-    ]
-  );
-
-  const miniLayoutState = React.useMemo(
-    () => ({
-      width,
-      height,
-      xOffset,
-      yOffset,
-    }),
-    [width, height, xOffset, yOffset]
+    [VideoComponent, PresentationComponent]
   );
 
   return (
     <NowPlayingContext.Provider value={nowPlayingState}>
       <PresentationContext.Provider value={presentationState}>
-        <MiniPresentationLayoutContext.Provider value={miniLayoutState}>
-          <InternalPlayerContext.Provider value={internalPlayerState}>
-            <FullscreenSlidingPlayer isMasterPlayer />
-            {children}
-          </InternalPlayerContext.Provider>
-        </MiniPresentationLayoutContext.Provider>
+        <InternalPlayerContext.Provider value={internalPlayerState}>
+          <FullscreenSlidingPlayer>{children}</FullscreenSlidingPlayer>
+        </InternalPlayerContext.Provider>
       </PresentationContext.Provider>
     </NowPlayingContext.Provider>
   );

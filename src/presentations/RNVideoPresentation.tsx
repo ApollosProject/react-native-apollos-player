@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, StyleSheet, View, InteractionManager } from 'react-native';
+import { StyleSheet, View, InteractionManager, Platform } from 'react-native';
 import Video from 'react-native-video';
 import { styled } from '@apollosproject/ui-kit';
 import usePlayer from '../usePlayer';
@@ -7,12 +7,10 @@ import usePlayer from '../usePlayer';
 import { InternalPlayerContext } from '../context';
 
 const Container = styled(
-  ({ isFullscreen, theme }: any) => ({
+  ({ theme }: any) => ({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: theme.colors.black,
-    borderRadius: !isFullscreen ? theme.sizing.baseUnit : 0,
     overflow: 'hidden',
-    ...(Platform.select(theme?.shadows?.default) as object),
   }),
   'ApollosPlayer.RNVideoPresentation.Container'
 )(View);
@@ -77,8 +75,19 @@ const RNVideoPresentation = () => {
 
   setSeekHandler(() => seek);
 
+  // While Android doesn't have a fullscreen player, calling present
+  // and dismiss does still hide the status bar and Android controls
+  React.useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    if (isFullscreen) {
+      videoRef.current?.presentFullscreenPlayer();
+    } else {
+      videoRef.current?.dismissFullscreenPlayer();
+    }
+  }, [isFullscreen]);
+
   return (
-    <Container isFullscreen={isFullscreen}>
+    <Container>
       {nowPlaying?.source ? (
         <Video
           ref={videoRef}
@@ -106,7 +115,7 @@ const RNVideoPresentation = () => {
             });
           }}
           repeat
-          resizeMode={'contain'}
+          resizeMode={isFullscreen ? 'contain' : 'cover'}
           style={StyleSheet.absoluteFill}
         />
       ) : null}

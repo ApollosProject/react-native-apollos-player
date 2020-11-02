@@ -12,6 +12,7 @@ const Container = styled(
   ({ theme }: any) => ({
     width: '100%',
     paddingHorizontal: theme?.sizing?.baseUnit,
+    paddingBottom: theme?.sizing?.baseUnit,
   }),
   'ui-media.MediaPlayer.Seeker.Container'
 )(View);

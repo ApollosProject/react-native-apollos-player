@@ -1,15 +1,22 @@
 import * as React from 'react';
-import { Text, SafeAreaView } from 'react-native';
+import { Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import PlayerExamples from './Examples';
 
-import { VideoPreviewMiniIOS } from 'react-native-apollos-player';
+import { ApollosPlayerContainer } from 'react-native-apollos-player';
 
 const TestOne = () => {
   const { push, goBack } = useNavigation<any>();
 
   return (
-    <SafeAreaView>
+    <ApollosPlayerContainer
+      source={require('./broadchurch.mp4')}
+      presentationProps={{
+        title: 'Video Title',
+        description: 'Video Description',
+        coverImage: { uri: 'https://picsum.photos/100/100' },
+      }}
+    >
       <PlayerExamples />
       <Text>---------</Text>
       <Text onPress={() => push('Reparenting')}>Reparenting test</Text>
@@ -18,8 +25,133 @@ const TestOne = () => {
       <Text onPress={() => push('FullScreenModal')}>FullScreenModal view</Text>
       <Text onPress={() => push('FormSheet')}>FormSheet view</Text>
       <Text onPress={goBack}>Go Back</Text>
-      <VideoPreviewMiniIOS />
-    </SafeAreaView>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+      <Text>---------</Text>
+    </ApollosPlayerContainer>
   );
 };
 

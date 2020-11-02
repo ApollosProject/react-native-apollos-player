@@ -2,226 +2,114 @@ import * as React from 'react';
 import {
   Animated,
   StyleSheet,
-  Dimensions,
-  LayoutChangeEvent,
-  PanResponder,
+  StatusBar,
   Platform,
   Modal,
+  Dimensions,
+  View,
 } from 'react-native';
 
-import {
-  PresentationContext,
-  MiniPresentationLayoutContext,
-  NowPlayingContext,
-  InternalPlayerContext,
-} from './context';
+import { PresentationContext, NowPlayingContext } from './context';
 
 import VideoPresentationContainer from './VideoPresentationContainer';
 
 import VideoOutlet from './VideoOutlet';
 
-interface FullScreenSlidingPlayerProps {
-  /**
-   * Whether to treat as the "master" (root-level) player object.
-   * When true, a <VideoPresentationContainer /> will be mounted.
-   * This is important as the native-side portal code needs something to
-   * treat as the base node to "portal" everywhere else.
-   */
-  isMasterPlayer?: boolean;
-}
+interface FullScreenSlidingPlayerProps {}
+
 const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerProps> = ({
-  isMasterPlayer = false,
+  children,
 }) => {
-  const {
-    MiniPresentationComponent,
-    FullScreenPresentationComponent,
-  } = React.useContext(PresentationContext);
+  const { PresentationComponent } = React.useContext(PresentationContext);
 
-  const { isInPiP } = React.useContext(InternalPlayerContext);
+  const [layout, setLayout] = React.useState({
+    x: 0,
+    y: 0,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  });
 
-  // Tracks the opening/closing animation. Since we use a <Modal> on iOS,
-  // ths is effectively only really used fully on Android
-  // (although the animation is still triggered on iOS to KISS).
+  const window = Dimensions.get('screen');
+
+  // TODO: calculate this some other way?
+  const videoHeight = Math.min(
+    layout.height * 0.4,
+    Math.max(1, layout.width * (9 / 16))
+  );
+
   const fullscreenAnimation = React.useRef(new Animated.Value(0)).current;
 
-  // Tracks the sliding animation the mini-player makes when it opens / closes
-  const noMediaAnimation = React.useRef(new Animated.Value(1)).current;
-
-  // Tracks the user dragging the fullscreen player down
-  const fullscreenDragOffset = React.useRef(new Animated.Value(0)).current;
-
-  // Tracks the user dragging the mini player around
-  const miniDragOffset = React.useRef([
-    new Animated.Value(0),
-    new Animated.Value(0),
-  ]).current;
-
-  // This is set as a Ref since it is mutated (onLayout call below)
-  const fullscreenHeightRef = React.useRef(Dimensions.get('window').height);
-
-  // ☠️ This is causing a crash on iOS 14
-  // Disabling this destroys the "drag to close" animation
-  // Used to render position of the fullscreen slider
-  // const fullScreenWithOffset = React.useRef(
-  //   Animated.add(fullscreenAnimation, fullscreenDragOffset)
-  // ).current;
-
-  // Used to render position of the mini player
-  const fullscreenWithNoMediaAnimation = React.useRef(
-    Animated.add(fullscreenAnimation, noMediaAnimation)
-  ).current;
-
-  const miniLayout = React.useContext(MiniPresentationLayoutContext);
-
-  const { nowPlaying, isFullscreen, setIsFullscreen } = React.useContext(
-    NowPlayingContext
-  );
+  const { isFullscreen } = React.useContext(NowPlayingContext);
 
   Animated.spring(fullscreenAnimation, {
     toValue: isFullscreen ? 1 : 0,
-    useNativeDriver: true,
-  }).start();
-
-  Animated.spring(noMediaAnimation, {
-    toValue: nowPlaying?.source && !isInPiP ? 0 : 1,
-    useNativeDriver: true,
+    useNativeDriver: false, // todo
   }).start();
 
   const fullscreenPresentationStyles = React.useMemo(
     () => [
       StyleSheet.absoluteFill,
       {
-        zIndex: 9999, // 🎉
-        // ☠️ This is causing a crash on iOS 14
-        // Disabling this destroys the "drag to close" animation
-        // opacity: fullScreenWithOffset.interpolate({
-        //   inputRange: [0, 0.5],
-        //   outputRange: [0, 1],
-        //   extrapolate: 'clamp',
-        // }),
-        // transform: [
-        //   {
-        //     translateY: fullscreenAnimation.interpolate({
-        //       inputRange: [0, 1],
-        //       outputRange: [fullscreenHeightRef.current, 0],
-        //     }),
-        //   },
-        // ],
+        zIndex: 99999,
+        // cancel out animation effect below
+        transform: [
+          {
+            translateY: 0,
+          },
+        ],
       },
     ],
     []
   );
 
-  const miniPresentationStyles = React.useMemo(
+  const presentationStyles = React.useMemo(
     () => ({
-      zIndex: 9999, // 🎉
       position: 'absolute',
-      right: miniLayout.xOffset,
-      bottom: miniLayout.yOffset,
-      width: miniLayout.width,
-      height: miniLayout.height,
-      opacity: fullscreenWithNoMediaAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [1, 0],
-      }),
+      left: 0,
+      right: 0,
+      top: 0,
       transform: [
         {
-          translateX: fullscreenWithNoMediaAnimation.interpolate({
+          translateY: fullscreenAnimation.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, miniLayout.width + miniLayout.xOffset],
+            outputRange: [0, layout.height - window.height],
           }),
         },
+      ],
+      height: fullscreenAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [videoHeight, window.height],
+      }),
+    }),
+    [videoHeight, fullscreenAnimation, layout.height, window.height]
+  );
+
+  const scrollViewStyles = React.useMemo(
+    () => ({
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      top: 0,
+      transform: [
         {
-          translateX: miniDragOffset[0],
-        },
-        {
-          translateY: miniDragOffset[1],
+          translateY: fullscreenAnimation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, window.height],
+          }),
         },
       ],
     }),
-    [miniLayout, fullscreenWithNoMediaAnimation, miniDragOffset]
-  );
-
-  const fullscreenPanResponder = React.useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, { dx, dy }) =>
-          // set pan responder only when we move enough in the Y-axis
-          Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10,
-
-        onPanResponderMove: (_, { dy }) => {
-          // Calculate the amount you've offsetted the cover
-          const _dragOffset = Math.min(0, -dy / fullscreenHeightRef.current);
-          fullscreenDragOffset.setValue(_dragOffset);
-        },
-
-        onPanResponderRelease: (_, { dy, vy }) => {
-          const gestureVelocity = vy;
-          const gestureDistance = Math.abs(dy);
-
-          // Determine whether to continue the animation and exit fullscreen,
-          // or stay full screen and reset back up
-          let _isFullscreen = true;
-          if (Math.abs(gestureVelocity) > 0.5) {
-            // ^^ the user is dragging fast!
-            if (gestureVelocity > 0) {
-              // ^^ but in the wrong direction!
-              _isFullscreen = false;
-            }
-          } else if (gestureDistance >= fullscreenHeightRef.current / 2) {
-            // ^^ not dragging fast, but has dragged atleast half-way
-            _isFullscreen = false;
-          }
-
-          if (_isFullscreen) {
-            Animated.spring(fullscreenDragOffset, {
-              toValue: 0,
-              useNativeDriver: true,
-            }).start(() => fullscreenDragOffset.setValue(0));
-          } else {
-            fullscreenDragOffset.setValue(0);
-          }
-
-          setIsFullscreen(_isFullscreen);
-        },
-      }),
-    [fullscreenDragOffset, setIsFullscreen]
-  );
-
-  const miniPanResponder = React.useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, { dx, dy }) =>
-          // set pan responder only when we move enough in either Y-axis
-          Math.abs(dy) > 10 || Math.abs(dx) > 10,
-
-        onPanResponderMove: (_, { dy, dx }) => {
-          // Dividing by two to create some friction
-          miniDragOffset[0].setValue(dx / 2);
-          miniDragOffset[1].setValue(dy / 2);
-        },
-
-        onPanResponderRelease: () => {
-          Animated.spring(miniDragOffset[0], {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-          Animated.spring(miniDragOffset[1], {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        },
-      }),
-    [miniDragOffset]
+    [fullscreenAnimation, window.height]
   );
 
   let FullscreenWrapper = React.useMemo(() => {
     // We have to wrap fullscreen view in <Modal> on iOS in order to make sure
     // the player is presented on top of ReactNavigation Native Navigation views
-    if (Platform.OS !== 'ios') return React.Fragment;
+    if (Platform.OS !== 'ios') return () => null;
     const Wrapper: React.FunctionComponent = (props) => (
       <Modal
-        animationType="slide"
+        animationType="fade"
         presentationStyle="overFullScreen"
         hardwareAccelerated
         transparent
@@ -240,43 +128,44 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
   }, [isFullscreen]);
 
   return (
-    <React.Fragment>
-      {/* Root-Level Video View */}
-      {isMasterPlayer ? (
-        <Animated.View
-          style={
-            isFullscreen ? fullscreenPresentationStyles : miniPresentationStyles
-          }
-        >
-          <VideoPresentationContainer />
-        </Animated.View>
-      ) : null}
+    <View
+      style={StyleSheet.absoluteFill}
+      onLayout={({ nativeEvent: { layout: _layout } }) => setLayout(_layout)}
+    >
+      <Animated.ScrollView
+        scrollEventThrottle={16}
+        style={scrollViewStyles}
+        contentInset={{ top: videoHeight }}
+        contentOffset={{
+          x: 0,
+          y: -videoHeight,
+        }}
+      >
+        {/* Only iOS supports contentInset and offset above */}
+        {Platform.OS !== 'ios' ? (
+          <View style={{ height: videoHeight }} />
+        ) : null}
+        {children}
+      </Animated.ScrollView>
 
-      {/* FullScreen controls */}
+      {/* Primary Video View */}
+      <Animated.View style={presentationStyles}>
+        <VideoPresentationContainer />
+        {PresentationComponent ? <PresentationComponent /> : null}
+      </Animated.View>
+
+      {/* iOS-only modal-based fullScreen controls */}
       <FullscreenWrapper>
         <Animated.View
-          onLayout={(e: LayoutChangeEvent) => {
-            fullscreenHeightRef.current = e?.nativeEvent?.layout?.height;
-          }}
-          style={fullscreenPresentationStyles}
-          {...fullscreenPanResponder.panHandlers}
+          style={[presentationStyles, fullscreenPresentationStyles]}
         >
           {isFullscreen ? <VideoOutlet /> : null}
-          {FullScreenPresentationComponent ? (
-            <FullScreenPresentationComponent />
-          ) : null}
+          {PresentationComponent ? <PresentationComponent /> : null}
         </Animated.View>
       </FullscreenWrapper>
 
-      {/* Mini controls */}
-      <Animated.View
-        style={miniPresentationStyles}
-        {...miniPanResponder.panHandlers}
-      >
-        {!isMasterPlayer && !isFullscreen ? <VideoOutlet /> : null}
-        {MiniPresentationComponent ? <MiniPresentationComponent /> : null}
-      </Animated.View>
-    </React.Fragment>
+      <StatusBar hidden={isFullscreen} showHideTransition="slide" />
+    </View>
   );
 };
 

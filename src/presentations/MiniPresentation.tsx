@@ -14,12 +14,11 @@ import FadeoutOverlay from '../FadeoutOverlay';
 
 export interface MiniPresentationProps {}
 
-const MiniFadeoutOverlay = styled(({ theme }: any) => ({
-  borderRadius: theme?.sizing?.baseUnit,
+const MiniFadeoutOverlay = styled({
   alignItems: 'center',
   justifyContent: 'center',
   flexDirection: 'row',
-}))(FadeoutOverlay);
+})(FadeoutOverlay);
 
 const StyledButtonIcon = withTheme(({ theme }: any) => ({
   fill: theme?.colors?.white,
@@ -84,16 +83,5 @@ const MiniPresentation: React.FunctionComponent<MiniPresentationProps> = () => {
     </ThemeMixin>
   );
 };
-
-const screen = Dimensions.get('screen');
-
-export const defaultMiniPlayerSize = {
-  width: Math.max(Math.min(screen.width * 0.5, 240), 180),
-  height: 0,
-  xOffset: 16,
-  yOffset: 24,
-};
-
-defaultMiniPlayerSize.height = defaultMiniPlayerSize.width * (9 / 16);
 
 export default MiniPresentation;
