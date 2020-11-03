@@ -29,6 +29,7 @@ const RNVideoPresentation = () => {
     setSeekHandler,
     handleProgress,
     setIsInPiP,
+    isInPiP,
   } = React.useContext(InternalPlayerContext);
 
   const playheadRef = React.useRef({
@@ -94,12 +95,12 @@ const RNVideoPresentation = () => {
           source={nowPlaying?.source}
           paused={!isPlaying}
           ignoreSilentSwitch={'ignore'}
-          // allowsExternalPlayback
+          allowsExternalPlayback
           // playInBackground
-          // playWhenInactive
+          playWhenInactive
           onProgress={handleProgressProp}
           onAudioBecomingNoisy={() => setIsPlaying(false)}
-          pictureInPicture={!isFullscreen}
+          pictureInPicture={isInPiP}
           onEnd={() => {
             setIsPlaying(false);
           }}
