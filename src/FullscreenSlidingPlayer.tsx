@@ -51,15 +51,11 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
       StyleSheet.absoluteFill,
       {
         zIndex: 99999,
-        // cancel out animation effect below
-        transform: [
-          {
-            translateY: 0,
-          },
-        ],
+        top: window.height - layout.height,
+        left: window.width - layout.width,
       },
     ],
-    []
+    [layout.height, layout.width, window.height, window.width]
   );
 
   const presentationStyles = React.useMemo(
@@ -75,13 +71,30 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
             outputRange: [0, layout.height - window.height],
           }),
         },
+        {
+          translateX: fullscreenAnimation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, layout.width - window.width],
+          }),
+        },
       ],
+      width: fullscreenAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [layout.width, window.width],
+      }),
       height: fullscreenAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [videoHeight, window.height],
       }),
     }),
-    [videoHeight, fullscreenAnimation, layout.height, window.height]
+    [
+      videoHeight,
+      fullscreenAnimation,
+      layout.height,
+      layout.width,
+      window.width,
+      window.height,
+    ]
   );
 
   const scrollViewStyles = React.useMemo(

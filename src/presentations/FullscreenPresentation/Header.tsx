@@ -23,7 +23,7 @@ const MoreButton = withTheme(
   ({ theme }: any) => ({
     fill: theme?.colors?.text?.secondary,
     style: {
-      paddingVertical: 0,
+      paddingVertical: theme?.sizing?.baseUnit / 1.25,
       paddingHorizontal: theme?.sizing?.baseUnit / 1.25,
       borderRadius: 0,
     },
@@ -43,7 +43,7 @@ const Header: React.FunctionComponent = () => {
 
   return (
     <Container>
-      <PaddedView vertical={false}>
+      <PaddedView>
         {nowPlaying?.presentationProps?.coverImage ? (
           <Image source={nowPlaying.presentationProps.coverImage} />
         ) : null}
