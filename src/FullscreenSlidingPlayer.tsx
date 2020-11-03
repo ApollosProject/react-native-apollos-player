@@ -69,22 +69,26 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
           translateY: fullscreenAnimation.interpolate({
             inputRange: [0, 1],
             outputRange: [0, layout.height - window.height],
+            extrapolate: 'clamp',
           }),
         },
         {
           translateX: fullscreenAnimation.interpolate({
             inputRange: [0, 1],
             outputRange: [0, layout.width - window.width],
+            extrapolate: 'clamp',
           }),
         },
       ],
       width: fullscreenAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [layout.width, window.width],
+        extrapolate: 'clamp',
       }),
       height: fullscreenAnimation.interpolate({
         inputRange: [0, 1],
         outputRange: [videoHeight, window.height],
+        extrapolate: 'clamp',
       }),
     }),
     [
@@ -109,6 +113,7 @@ const FullscreenSlidingPlayer: React.FunctionComponent<FullScreenSlidingPlayerPr
           translateY: fullscreenAnimation.interpolate({
             inputRange: [0, 1],
             outputRange: [0, window.height],
+            extrapolate: 'clamp',
           }),
         },
       ],
