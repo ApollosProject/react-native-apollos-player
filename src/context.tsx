@@ -19,6 +19,8 @@ export const NowPlayingContext = React.createContext<INowPlaying>({
   reset: () => null,
   seek: () => null,
   skip: () => null,
+  isInPiP: false,
+  setIsInPiP: () => null,
 });
 
 export const PresentationContext = React.createContext<IPresentationComponents>(
@@ -37,6 +39,4 @@ export const InternalPlayerContext = React.createContext<IInternalPlayer>({
   playerId: '',
   onProgress: (_: (props: IProgressProp) => void) => () => {},
   handleProgress: () => {},
-  isInPiP: false,
-  setIsInPiP: () => null,
 });

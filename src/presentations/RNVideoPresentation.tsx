@@ -22,15 +22,13 @@ const RNVideoPresentation = () => {
     isFullscreen,
     isPlaying,
     setIsPlaying,
-  } = usePlayer();
-
-  const {
-    setSkipHandler,
-    setSeekHandler,
-    handleProgress,
     setIsInPiP,
     isInPiP,
-  } = React.useContext(InternalPlayerContext);
+  } = usePlayer();
+
+  const { setSkipHandler, setSeekHandler, handleProgress } = React.useContext(
+    InternalPlayerContext
+  );
 
   const playheadRef = React.useRef({
     currentTime: 0,

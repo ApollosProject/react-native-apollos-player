@@ -35,6 +35,9 @@ export interface INowPlaying {
   setIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   setIsFullscreen: React.Dispatch<React.SetStateAction<boolean>>;
   reset: (props: any) => void;
+
+  isInPiP: boolean;
+  setIsInPiP: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IProgressProp {
@@ -56,8 +59,6 @@ export interface IInternalPlayer {
   isControlVisibilityLocked: boolean;
   onProgress: (handlerToAdd: (props: IProgressProp) => void) => () => void;
   handleProgress: (props: IProgressProp) => void;
-  isInPiP: boolean;
-  setIsInPiP: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface IPresentationComponents {

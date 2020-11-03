@@ -70,6 +70,8 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       reset,
       seek,
       skip,
+      isInPiP,
+      setIsInPiP,
     }),
     [
       nowPlaying,
@@ -81,6 +83,8 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       reset,
       seek,
       skip,
+      isInPiP,
+      setIsInPiP,
     ]
   );
 
@@ -116,8 +120,6 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       setSkipHandler,
       setIsControlVisibilityLocked,
       isControlVisibilityLocked,
-      isInPiP,
-      setIsInPiP,
     }),
     [
       playerId,
@@ -128,8 +130,6 @@ const Container: React.FunctionComponent<ContainerProps> = ({
       isControlVisibilityLocked,
       handleProgress,
       onProgress,
-      isInPiP,
-      setIsInPiP,
     ]
   );
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, NativeModules, Platform } from 'react-native';
 import {
   H4,
   BodySmall,
@@ -19,7 +19,7 @@ const Image = styled(({ theme }: any) => ({
   aspectRatio: 1,
 }))(ConnectedImage);
 
-const MoreButton = withTheme(
+const PiPButton = withTheme(
   ({ theme }: any) => ({
     fill: theme?.colors?.text?.secondary,
     style: {
@@ -28,7 +28,7 @@ const MoreButton = withTheme(
       borderRadius: 0,
     },
     size: theme?.sizing?.baseUnit * 1.5,
-    name: 'settings',
+    name: 'sections',
   }),
   'ui-media.MediaPlayer.FullscreenControls.Header.DownButton'
 )(ButtonIcon);
@@ -39,7 +39,17 @@ const Container = styled({
 })(SafeAreaView);
 
 const Header: React.FunctionComponent = () => {
-  const { nowPlaying } = usePlayer();
+  const { nowPlaying, isInPiP, setIsInPiP } = usePlayer();
+  const [canPiP, setCanPiP] = React.useState(false);
+
+  // Detect iOS PiP support
+  React.useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    const isPictureInPictureSupported = NativeModules.ApollosPlayer?.isPictureInPictureSupported();
+    isPictureInPictureSupported?.then((result: boolean) => {
+      setCanPiP(result);
+    });
+  }, []);
 
   return (
     <Container>
@@ -54,7 +64,7 @@ const Header: React.FunctionComponent = () => {
         <BodySmall>{nowPlaying?.presentationProps?.description}</BodySmall>
       </PaddedView>
 
-      <MoreButton />
+      {canPiP ? <PiPButton onPress={() => setIsInPiP(!isInPiP)} /> : null}
     </Container>
   );
 };
